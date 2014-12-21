@@ -29,23 +29,25 @@ public class Translation {
 	
 	public static Automaton pa2fa(OTree objtree) {
 		
-	    Automaton A;
+	    Automaton objAutomaton = new Automaton();
 		switch(objtree.type) {
 
 			case PALexer.EX :
 				Quant ex = (Quant)objtree;
 				String varname = ex.var;
 				OTree son  = ex.son;
-				A = pa2fa(son);
-				A.project(varname);
+				Automaton ASon = pa2fa(son);
+				Automaton AEx = objAutomaton.Project(ASon, varname);
+				return AEx;
 				
 			case PALexer.ALL :
 				Quant ex1 = (Quant)objtree;
 				String varname1 = ex1.var;
 				OTree son1  = ex1.son;
-				A = pa2fa(son1);
-				A = A.Negation();
-				A.project(varname1);
+				Automaton ASon1 = pa2fa(son1);
+				Automaton ANegSon1 = objAutomaton.Negation(ASon1);
+				Automaton AAll = objAutomaton.Project(ANegSon1, varname1);
+				return AAll;
 				
 				// all the comparators starting a atomic formula
             case PALexer.EQ :
@@ -65,35 +67,40 @@ public class Translation {
 		    	BinTree objBinTreeAnd = (BinTree)objtree;
 				Automaton ALeftAnd = pa2fa(objBinTreeAnd.left);
 				Automaton ARightAnd = pa2fa(objBinTreeAnd.right);
-				A = ALeftAnd.intersect(ARightAnd);
+				Automaton A1IntersectA2 = objAutomaton.Intersect(ALeftAnd,ARightAnd);
+				return A1IntersectA2;
 			
 			case PALexer.OR:
 				BinTree objBinTreeOr = (BinTree)objtree;
 				Automaton ALeftOr = pa2fa(objBinTreeOr.left);
 				Automaton ARightOr = pa2fa(objBinTreeOr.right);
-				A = ALeftOr.union(ARightOr);
+				Automaton A1UnionA2 = objAutomaton.Union(ALeftOr, ARightOr);
+				return A1UnionA2;
 					
 			case PALexer.NEG:		
-				A = pa2fa(objtree).Negation();
+				Automaton NegA = objAutomaton.Negation(pa2fa(objtree));
+				return NegA;
 			
 			case PALexer.IMP:
 				BinTree objBinTreeImp = (BinTree)objtree;
 				Automaton ALeftImp = pa2fa(objBinTreeImp.left);
-				Automaton ALeftImpNeg = ALeftImp.Negation();
+				Automaton ALeftImpNeg = objAutomaton.Negation(ALeftImp);
 				Automaton ARightImp = pa2fa(objBinTreeImp.right);
-				A = ALeftImpNeg.union(ARightImp);
+				Automaton A1ImpA2 = objAutomaton.Union(ALeftImpNeg, ARightImp);
+				return A1ImpA2;
 				
 			case PALexer.EQV:		
 				BinTree objBinTreeEqvImp = (BinTree)objtree;
 				Automaton ALeftEqvImp = pa2fa(objBinTreeEqvImp.left);
-				Automaton ALeftEqvImpNeg = ALeftEqvImp.Negation();
+				Automaton ALeftEqvImpNeg = objAutomaton.Negation(ALeftEqvImp);
 				Automaton ARightEqvImp = pa2fa(objBinTreeEqvImp.right);
-				Automaton ABimpTerm1 = ALeftEqvImpNeg.union(ARightEqvImp);
+				Automaton ABimpTerm1 = objAutomaton.Union(ALeftEqvImpNeg, ARightEqvImp);
 				
-				Automaton ARightEqvImpNeg = ARightEqvImp.Negation();
-				Automaton ABimpTerm2 = ARightEqvImpNeg.union(ALeftEqvImp);
+				Automaton ARightEqvImpNeg = objAutomaton.Negation(ARightEqvImp);
+				Automaton ABimpTerm2 = objAutomaton.Union(ARightEqvImpNeg, ALeftEqvImp);
 				
-				A = ABimpTerm1.intersect(ABimpTerm2);
+				Automaton A1BimpA2 = objAutomaton.Intersect(ABimpTerm1, ABimpTerm2);
+				return A1BimpA2;
 				
 			default:
 				return null;
