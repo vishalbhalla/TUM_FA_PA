@@ -15,7 +15,6 @@ import parsing.*;
 import parsing.otree.*;
 
 import automatons.Automaton;
-import automatons.ListAutomaton;
 
 
 
