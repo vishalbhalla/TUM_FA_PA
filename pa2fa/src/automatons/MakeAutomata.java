@@ -8,8 +8,6 @@ import java.util.SortedSet;
 
 import java.util.Map.Entry;
 
-
-
 public class MakeAutomata {
 
 	//Automaton automaton;
@@ -17,6 +15,13 @@ public class MakeAutomata {
 		
 	}
 	
+	/**
+	 * generates an Automaton that accepts all words
+	 * note that this Automaton is not minimal! It has 2 States where only 1 
+	 * would be needed, done for testing the minimization algorithm.
+	 * @param varSet
+	 * @return
+	 */
 	public static Automaton UniversalAutomation(SortedSet<String> varSet)
 	{
 		Automaton A = new Automaton();
@@ -29,7 +34,13 @@ public class MakeAutomata {
 		String state2 = "2";
 		hm.put(state2,t);
 		A.trans.put(A.startState, hm);
-		A.trans.put(state2, hm);
+
+		Transitions t2 = generateAllCombinations(varSet.size());
+		HashMap<String,Transitions> hm2 = new HashMap<String,Transitions>();
+		hm2.put(state2,t2);
+
+		
+		A.trans.put(state2, hm2);
 		return A;
 	}
 	
@@ -262,13 +273,31 @@ public class MakeAutomata {
 	
 	/**
 	 * projects away the variable in variableName
+	 * TODO: Take Care !! this method alters the automaton A1 !!
 	 * @param A1, variableName
 	 */
 	public Automaton Project(Automaton A1, String variableName) {
-		//TODO
-		//is s in variables? if not, do nothing
+		
+		if(!A1.variables.contains(variableName)) {
+			System.out.println("ERROR: variable not in Set of free Variables!");
+			return A1;
+		}
+		int index=0;
+		for(String v : A1.variables) {
+			if(v.equals(variableName))
+				break;
+			index++;
+		}
+		
+		for(Map.Entry<String, HashMap<String,Transitions>> transition : A1.trans.entrySet()) {
+			for(Map.Entry<String, Transitions> entry : transition.getValue().entrySet()) {
+				entry.getValue().project(index); 
+			}
+		}	
 		return A1;
 	}
+		
+	
 	
 	/**
 	 * complements the Automaton (Assuming that the input automation is a DFA)

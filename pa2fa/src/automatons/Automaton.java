@@ -8,8 +8,7 @@ import java.util.TreeSet;
 
 class Transitions {
 	
-	//HashSet<boolean[]> StateTransitionVector = new HashSet< boolean[]>();
-	TreeSet<boolean[]> StateTransitionVector = new TreeSet<boolean[]>(new Comparator<boolean[]>(){
+	static Comparator<boolean[]> ourComp = new Comparator<boolean[]>(){
         public int compare(boolean[] t1, boolean[] t2){
         	for (int j = 0; j<t1.length; j++)
         	{
@@ -19,8 +18,10 @@ class Transitions {
         			   return 1;
         	}
         	return 0;
-        	}}
-        );
+        	}};
+	
+	//HashSet<boolean[]> StateTransitionVector = new HashSet< boolean[]>();
+	TreeSet<boolean[]> StateTransitionVector = new TreeSet<boolean[]>(ourComp);
 	
 	public String toString() {
 		String ret = "";
@@ -34,6 +35,21 @@ class Transitions {
 			}
 		}
 		return ret;
+	}
+
+	public void project(int index) {
+		// delete from every boolean array the component at column @index
+		TreeSet<boolean[]> tmp = new TreeSet< boolean[]>(ourComp);
+		for(boolean[] e : StateTransitionVector) {
+			boolean[] e2 = new boolean[e.length-1];
+			for(int i=0,j=0; i<e.length; i++) {
+				if(i!=index) {
+					e2[j++] = e[i];
+				}
+			}
+			tmp.add(e2);
+		}
+		StateTransitionVector = tmp;
 	}
 }
 
