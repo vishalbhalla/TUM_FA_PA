@@ -1,25 +1,94 @@
 package logic;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.TreeSet;
+
 import parsing.*;
 import parsing.otree.*;
 import automatons.Automaton;
 import automatons.MakeAutomata;
+import automatons.Transitions;
 
 
 
 public class Translation {
 
+	
+	/**
+	 * divides i by two and then floors, s.th div2floor(-1)=2
+	 * @param i
+	 * @return
+	 * @author max
+	 */
+	static int div2floor(int i) {
+		if(i>=0) return i/2;
+		else if(i%2==0) return i/2;
+		else return (i-1)/2;
+	}
+	
 	/**
 	 * translates an Atomic formula of Presburger Arithmetic
 	 * into a deterministic finite automaton
 	 * @param objlscoeff 
 	 * @param objlsvar 
-	 * @param rightside 
+	 * @param rightside
+	 * @author max 
 	 * @return
 	 */
 	public static Automaton AF2DFA(int rightside, ArrayList<String> objlsvar, ArrayList<Integer> objlscoeff) {
 		
-		return null;
+		// check whether input is alright, i.e. length of ArrayLists are the same
+		if(objlsvar.size()==0 || objlsvar.size()!=objlscoeff.size()) {
+			System.out.println("ERROR: Arrays not same size or empty!");
+			return null;
+		}
+		
+		int n = objlsvar.size();
+		
+		Automaton A = new Automaton();
+		
+		// initialize
+		A.startState = ""+rightside;
+		A.variables = new TreeSet<String>();
+		A.variables.addAll(objlsvar);
+		
+		Queue<String> q = new LinkedList<String>();
+		q.add(A.startState);
+		
+		while(!q.isEmpty()) {
+			String sk = q.poll();
+			if(A.trans.containsKey(sk)) { // already visited
+				System.out.println("Skipping" + sk);
+				continue;
+			}
+			System.out.println("Processing " + sk);
+			int k = Integer.parseInt(sk);
+			HashMap<String, Transitions> outofsk = new HashMap<String, Transitions>();
+			A.trans.put(sk, outofsk);
+			if(k>=0) A.finalState.add(sk);
+			
+			for(int i=0; i< (1<<n); ++i) {
+				// calculate the j
+				int j = k;
+				int rest = i;
+				for(int m=0; m<n; m++) {
+					j -= (rest%2)*objlscoeff.get(m); // TODO: is this the right order, or should n-m be used?
+					rest /= 2;
+				}				
+				j = div2floor(j);
+				// add to queue and transition table
+				String sj = ""+j;
+				if(!A.trans.containsKey(sj)) q.add(sj);
+				if(!outofsk.containsKey(sj))
+					outofsk.put(sj, new Transitions());
+				System.out.println("add transition " + sk + "->" + sj + " labelled " + i);
+				outofsk.get(sj).addTransition(i, n);
+			}
+		}
+		
+		return A;
 	}
 	
 	
