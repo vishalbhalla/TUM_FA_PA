@@ -2,6 +2,7 @@ package automatons;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -24,6 +25,35 @@ public class UnivAutomatonTest {
 		assertTrue(dottyformatOp!=null);
 		
 	}
+	
+
+	@Test
+	public void test_accept() {
+		SortedSet<String> ss = new TreeSet<String>();
+		ss.add("x");
+		ss.add("y");
+		ss.add("z");
+		Automaton A = MakeAutomata.UniversalAutomation(ss);
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		boolean[] character = new boolean[] { true, true, true};
+		ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+		word.add(character);
+
+		// must accept (111)
+		assertTrue(MakeAutomata.member(A, word));
+
+		word.add(character);
+
+		
+		// and also (111) (111)
+		assertTrue(MakeAutomata.member(A, word));
+		
+	}
+	
 	
 	@Test
 	public void test_project() {

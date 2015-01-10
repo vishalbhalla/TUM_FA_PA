@@ -34,6 +34,7 @@ public class MakeAutomata {
 		Transitions t = generateAllCombinations(varSet.size());
 		HashMap<String,Transitions> hm = new HashMap<String,Transitions>();
 		String state2 = "2";
+		A.finalState.add(state2);
 		hm.put(state2,t);
 		A.trans.put(A.startState, hm);
 
@@ -372,18 +373,68 @@ public class MakeAutomata {
 	 * @param word
 	 * @return
 	 */
-	public boolean member(String word) {
+	public static boolean member(Automaton A, ArrayList<boolean[]> word) {
 		
-		return false;
+		return accepts(A, A.startState, word);
 	}
 	
-	public boolean accepts(String s, ArrayList<boolean[]> word) {
+	public static boolean accepts(Automaton A, String state, ArrayList<boolean[]> word) {
 		
-		// for all transitions from s labelled with word[0]
-		// if one of those returns true -> return true
-		
+		LinkedList<String> queue = new LinkedList<String>();
+		LinkedList<String> queue2;
+		queue.add(state);
+		int i=0;
+		for(; i<word.size() && !queue.isEmpty(); ++i) {
+			queue2 = new LinkedList<String>();
+			boolean[] label = word.get(i); // the ith character of the word
+			while(!queue.isEmpty()) {
+				String currentstate = queue.poll();
+				// go through all edges from currentstate labelled label
+				add_all_labelled_edges(A, currentstate, label, queue2);
+			}
+			queue = queue2;
+		}
+		if(word.size()<i || queue.isEmpty()) return false;
+		while(!queue.isEmpty()) {
+			String currentstate = queue.poll();
+			if(isfinal(A, currentstate)) return true;
+		}
 		return false;
 	}
+
+	private static boolean isfinal(Automaton A, String currentstate) {
+		return A.finalState.contains(currentstate);
+	}
+
+	/**
+	 * goes through all edges and adds the ones labeled with "label"
+	 * to the queue
+	 * TODO: quite inefficient, but it should work!
+	 * @param currentstate
+	 * @param label
+	 * @param q
+	 */
+	private static void add_all_labelled_edges(Automaton A, String currentstate, boolean[] label,
+			LinkedList<String> q) {
+
+		HashMap<String, Transitions> trans = A.trans.get(currentstate);
+		
+		for(Entry<String, Transitions> entry: trans.entrySet()) {
+			for(boolean[] word : entry.getValue().StateTransitionVector) {
+				if(label.length==word.length) {
+					int i=0;
+					for(; i<label.length; ++i) {
+						if(label[i]!=word[i]) break;
+					}	
+					if(i==label.length)
+						q.add(entry.getKey());
+				}
+			}
+		}
+	}		
+
+	
+	
 	
 	//NFA with 3 variables
 		public static Automaton CreateStubNFAWith3Variables(SortedSet<String> varSet)
