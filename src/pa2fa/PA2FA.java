@@ -15,6 +15,7 @@ import parsing.*;
 import parsing.otree.*;
 
 import automatons.Automaton;
+import automatons.MakeAutomata;
 
 
 
@@ -169,20 +170,12 @@ public class PA2FA {
 		}
 	}
 	
-	
-	
-	/**
-	 * the main function, handels parameter passing, and starts 
-	 * appropriate the algorithm
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException {
+	public static Automaton dothejob(String file) throws IOException {
 		
 		// handle arguments
 		
 		// read file
-		String text = readFile("/home/max/Dropbox/11. Semester/Automaten/pa/test/test1.txt");
+		String text = readFile(file);
 		
 		// parse input
 		OTree ast = compile(text);
@@ -192,8 +185,25 @@ public class PA2FA {
 		
 		// translate presburger arithmetic expression to DFA/NFA
 		Automaton out = Translation.pa2fa(ast);
+
+		return out;
+	}
+	
+	/**
+	 * the main function, handels parameter passing, and starts 
+	 * appropriate the algorithm
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
 		
-		System.out.println(out.toString());
+		Automaton out = dothejob(args[0]);
+
+		// printing the Automaton in dotty format
+		MakeAutomata objMakeAutomaton = new MakeAutomata();		
+		String dottyformatOp = objMakeAutomaton.ToString(out);
+		
+		System.out.println(dottyformatOp);
 		
 	}
 	
