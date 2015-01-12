@@ -93,5 +93,119 @@ public class PA2FATest {
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,1})));
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,0})));
 	}
+	@Test
+	public void test_NEQ() throws IOException {
+		System.out.println("========= TEST using NEQ ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testNEQ.txt"); // x!=1
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4})));
+	}
+	
+	
+	@Test
+	public void test_EQ() throws IOException {
+		System.out.println("========= TEST using EQ ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testEQ.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4})));
+	}
+	
+	@Test
+	public void test_OR() throws IOException {
+		System.out.println("========= TEST using OR ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testOR.txt"); // x<=3 || y<=10
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
 
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5,9})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,11})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2,11})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3,12})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4,13})));
+	}
+	
+			
+	@Test
+	public void test_GEQ() throws IOException {
+		System.out.println("========= TEST using GEQ ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testGEQ.txt"); // x>=3
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {110})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {12})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
+	}
+			
+	@Test
+	public void test_GT() throws IOException {
+		System.out.println("========= TEST using GT ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testGT.txt"); // x>10
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {110})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {12})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {11})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {10})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4})));
+	}
+	
+	@Test
+	public void test_LT() throws IOException {
+		System.out.println("========= TEST using LT ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testLT.txt"); // x<6
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {6})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {7})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {10})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {31})));
+	}
 }
