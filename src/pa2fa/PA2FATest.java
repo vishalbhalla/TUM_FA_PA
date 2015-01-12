@@ -34,6 +34,23 @@ public class PA2FATest {
 		return word;
 	}
 	
+	@Test
+	public void test_easyrev() throws IOException {
+		System.out.println("========= TEST EASYrev ==========");
+		Automaton A = PA2FA.dothejob("Test/easyrev.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4,0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3,0})));		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,5})));		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,1})));
+	}
 	
 	@Test
 	public void test_easy() throws IOException {

@@ -54,6 +54,21 @@ public class Translation {
 		A.variables = new TreeSet<String>();
 		A.variables.addAll(objlsvar);
 		
+		// in right order
+		ArrayList<Integer> objlscoeff_rO = new ArrayList<Integer>(n);
+		for(int i=0; i<n; i++) objlscoeff_rO.add(new Integer(0));
+		{
+			int j=0;
+			for(String var : A.variables) {
+				int i=0;
+				for(String var2 : objlsvar) {
+					if(var.equals(var2)) break;
+					i++;
+				}
+				objlscoeff_rO.set(j, objlscoeff.get(i));
+				j++;
+			}
+		}
 		Queue<String> q = new LinkedList<String>();
 		q.add(A.startState);
 		
@@ -74,7 +89,7 @@ public class Translation {
 				int j = k;
 				int rest = i;
 				for(int m=0; m<n; m++) {
-					j -= (rest%2)*objlscoeff.get(m); // TODO: is this the right order, or should n-m be used?
+					j -= (rest%2)*objlscoeff_rO.get(m); // TODO: is this the right order, or should n-m be used?
 					rest /= 2;
 				}				
 				j = div2floor(j);
@@ -161,7 +176,7 @@ public class Translation {
 				
 				return objMakeAutomaton.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
             }
-            case PALexer.LT : { // case  Ab < x tranformed to Ab <= x-1  
+            case PALexer.LT : { // case  Ab < x transformed to Ab <= x-1  
 				AF objAF = (AF)objtree;
 				int rightside = objAF.rightside;
 				ArrayList<String> objlsvar = objAF.lsvar;
