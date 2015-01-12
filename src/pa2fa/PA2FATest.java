@@ -52,6 +52,37 @@ public class PA2FATest {
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,1})));
 	}
 	
+	
+	@Test
+	public void test_testEx() throws IOException {
+		System.out.println("========= TEST Ex ==========");
+		Automaton A = PA2FA.dothejob("Test/testEx.txt"); // Ey x + y <= 2 
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4})));		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {5})));			
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {10})));		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {2})));
+	}
+	@Test
+	public void test_teststrangeEx() throws IOException {
+		System.out.println("========= TEST strange Ex ==========");
+		Automaton A = PA2FA.dothejob("Test/test_teststrangeEx.txt"); // Ex x <= 2 
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {})));
+	}
+	
+	
 	@Test
 	public void test_easy() throws IOException {
 		System.out.println("========= TEST EASY ==========");
