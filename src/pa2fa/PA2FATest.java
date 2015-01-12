@@ -55,6 +55,26 @@ public class PA2FATest {
 	
 	
 	@Test
+	public void test_negation() throws IOException {
+		System.out.println("========= TEST negation ==========");
+		Automaton A = PA2FA.dothejob("Test/negtest.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {6})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {7})));
+	}
+	
+	
+	@Test
 	public void test_and() throws IOException {
 		System.out.println("========= TEST using AND ==========");
 		
