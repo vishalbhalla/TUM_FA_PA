@@ -60,10 +60,10 @@ public class Translation {
 		while(!q.isEmpty()) {
 			String sk = q.poll();
 			if(A.trans.containsKey(sk)) { // already visited
-				System.out.println("Skipping" + sk);
+				//System.out.println("Skipping" + sk);
 				continue;
 			}
-			System.out.println("Processing " + sk);
+			//System.out.println("Processing " + sk);
 			int k = Integer.parseInt(sk);
 			HashMap<String, Transitions> outofsk = new HashMap<String, Transitions>();
 			A.trans.put(sk, outofsk);
@@ -83,7 +83,7 @@ public class Translation {
 				if(!A.trans.containsKey(sj)) q.add(sj);
 				if(!outofsk.containsKey(sj))
 					outofsk.put(sj, new Transitions());
-				System.out.println("add transition " + sk + "->" + sj + " labelled " + i);
+				//System.out.println("add transition " + sk + "->" + sj + " labelled " + i);
 				outofsk.get(sj).addTransition(i, n);
 			}
 		}
