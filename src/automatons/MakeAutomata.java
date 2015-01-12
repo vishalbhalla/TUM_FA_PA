@@ -179,19 +179,7 @@ public class MakeAutomata {
 	}
 	
 	
-	/**
-	 * write a method for negating the automation i.e. swap the final and non-final states
-	 * It obviously operates on the same variable set
-	 * 
-	 * @param A
-	 * @return
-	 */
-	public Automaton Negation(Automaton A)
-	{
-		Automaton NegA = new Automaton();
-		return NegA;
-	}
-	
+
 	
 	/**
 	 * determines the Union of A1 automaton with A2
@@ -387,7 +375,7 @@ public class MakeAutomata {
 			{
 				if(!AComplement.finalState.contains(keyFromStateA))
 					AComplement.finalState.add(keyFromStateA);
-				break;
+				// break; why a break here???? @max thinks that's wrong 
 			}
 		}		
 		return AComplement;
