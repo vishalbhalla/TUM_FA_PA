@@ -115,18 +115,59 @@ public class Translation {
 				return AAll;
 				
 				// all the comparators starting a atomic formula
-            case PALexer.EQ :
-            case PALexer.NEQ :
-            case PALexer.GEQ :
-            case PALexer.LEQ :
-            case PALexer.GT :
-            case PALexer.LT : 
+            case PALexer.EQ : { // case Ab = x, transformed to Ab <= x && !(Ab<=x-1)
 				AF objAF = (AF)objtree;
 				int rightside = objAF.rightside;
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
-				return AF2DFA(rightside, objlsvar, objlscoeff);
+				Automaton left = AF2DFA(rightside, objlsvar, objlscoeff);
+				Automaton right = objMakeAutomaton.Negation(AF2DFA(rightside-1, objlsvar, objlscoeff));
+				
+				return objMakeAutomaton.Intersect(left, right);
+			}
+            case PALexer.NEQ :{ // case Ab != x, transformed to !(Ab <= x) || Ab<=x-1
+				AF objAF = (AF)objtree;
+				int rightside = objAF.rightside;
+				ArrayList<String> objlsvar = objAF.lsvar;
+				ArrayList<Integer> objlscoeff = objAF.lscoeff;
+				
+				Automaton left = objMakeAutomaton.Negation(AF2DFA(rightside, objlsvar, objlscoeff));
+				Automaton right = AF2DFA(rightside-1, objlsvar, objlscoeff);
+				
+				return objMakeAutomaton.Union(left, right);
+			}
+            case PALexer.GEQ :{ // case Ab >= x, transformed to !(Ab <= x-1)
+				AF objAF = (AF)objtree;
+				int rightside = objAF.rightside;
+				ArrayList<String> objlsvar = objAF.lsvar;
+				ArrayList<Integer> objlscoeff = objAF.lscoeff;
+								
+				return objMakeAutomaton.Negation(AF2DFA(rightside-1, objlsvar, objlscoeff));
+			}
+            case PALexer.LEQ : { // standard case <=
+				AF objAF = (AF)objtree;
+				int rightside = objAF.rightside;
+				ArrayList<String> objlsvar = objAF.lsvar;
+				ArrayList<Integer> objlscoeff = objAF.lscoeff;
+				
+				return AF2DFA(rightside, objlsvar, objlscoeff); }
+				
+            case PALexer.GT : { // case Ab > x, transformed to !(Ab<=x)
+				AF objAF = (AF)objtree;
+				int rightside = objAF.rightside;
+				ArrayList<String> objlsvar = objAF.lsvar;
+				ArrayList<Integer> objlscoeff = objAF.lscoeff;
+				
+				return objMakeAutomaton.Negation(AF2DFA(rightside, objlsvar, objlscoeff));
+            }
+            case PALexer.LT : { // case  Ab < x tranformed to Ab <= x-1  
+				AF objAF = (AF)objtree;
+				int rightside = objAF.rightside;
+				ArrayList<String> objlsvar = objAF.lsvar;
+				ArrayList<Integer> objlscoeff = objAF.lscoeff;
+				
+				return AF2DFA(rightside-1, objlsvar, objlscoeff); }
 						
 		    case PALexer.AND:
 		    	BinTree objBinTreeAnd = (BinTree)objtree;
@@ -143,7 +184,8 @@ public class Translation {
 				return A1UnionA2;
 					
 			case PALexer.NEG:		
-				Automaton NegA = objMakeAutomaton.Negation(pa2fa(objtree));
+				UnTree u = (UnTree)objtree;				
+				Automaton NegA = objMakeAutomaton.Negation(pa2fa(u.son));
 				return NegA;
 			
 			case PALexer.IMP:
