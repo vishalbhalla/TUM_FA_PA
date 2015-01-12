@@ -110,7 +110,7 @@ public class Translation {
 				String varname1 = ex1.var;
 				OTree son1  = ex1.son;
 				Automaton ASon1 = pa2fa(son1);
-				Automaton ANegSon1 = objMakeAutomaton.Negation(ASon1);
+				Automaton ANegSon1 = objMakeAutomaton.Complement(ASon1);
 				Automaton AAll = objMakeAutomaton.Project(ANegSon1, varname1);
 				return AAll;
 				
@@ -122,7 +122,7 @@ public class Translation {
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
 				Automaton left = AF2DFA(rightside, objlsvar, objlscoeff);
-				Automaton right = objMakeAutomaton.Negation(AF2DFA(rightside-1, objlsvar, objlscoeff));
+				Automaton right = objMakeAutomaton.Complement(AF2DFA(rightside-1, objlsvar, objlscoeff));
 				
 				return objMakeAutomaton.Intersect(left, right);
 			}
@@ -132,7 +132,7 @@ public class Translation {
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
-				Automaton left = objMakeAutomaton.Negation(AF2DFA(rightside, objlsvar, objlscoeff));
+				Automaton left = objMakeAutomaton.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
 				Automaton right = AF2DFA(rightside-1, objlsvar, objlscoeff);
 				
 				return objMakeAutomaton.Union(left, right);
@@ -143,7 +143,7 @@ public class Translation {
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 								
-				return objMakeAutomaton.Negation(AF2DFA(rightside-1, objlsvar, objlscoeff));
+				return objMakeAutomaton.Complement(AF2DFA(rightside-1, objlsvar, objlscoeff));
 			}
             case PALexer.LEQ : { // standard case <=
 				AF objAF = (AF)objtree;
@@ -159,7 +159,7 @@ public class Translation {
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
-				return objMakeAutomaton.Negation(AF2DFA(rightside, objlsvar, objlscoeff));
+				return objMakeAutomaton.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
             }
             case PALexer.LT : { // case  Ab < x tranformed to Ab <= x-1  
 				AF objAF = (AF)objtree;
@@ -185,13 +185,13 @@ public class Translation {
 					
 			case PALexer.NEG:		
 				UnTree u = (UnTree)objtree;				
-				Automaton NegA = objMakeAutomaton.Negation(pa2fa(u.son));
+				Automaton NegA = objMakeAutomaton.Complement(pa2fa(u.son));
 				return NegA;
 			
 			case PALexer.IMP:
 				BinTree objBinTreeImp = (BinTree)objtree;
 				Automaton ALeftImp = pa2fa(objBinTreeImp.left);
-				Automaton ALeftImpNeg = objMakeAutomaton.Negation(ALeftImp);
+				Automaton ALeftImpNeg = objMakeAutomaton.Complement(ALeftImp);
 				Automaton ARightImp = pa2fa(objBinTreeImp.right);
 				Automaton A1ImpA2 = objMakeAutomaton.Union(ALeftImpNeg, ARightImp);
 				return A1ImpA2;
@@ -199,11 +199,11 @@ public class Translation {
 			case PALexer.EQV:		
 				BinTree objBinTreeEqvImp = (BinTree)objtree;
 				Automaton ALeftEqvImp = pa2fa(objBinTreeEqvImp.left);
-				Automaton ALeftEqvImpNeg = objMakeAutomaton.Negation(ALeftEqvImp);
+				Automaton ALeftEqvImpNeg = objMakeAutomaton.Complement(ALeftEqvImp);
 				Automaton ARightEqvImp = pa2fa(objBinTreeEqvImp.right);
 				Automaton ABimpTerm1 = objMakeAutomaton.Union(ALeftEqvImpNeg, ARightEqvImp);
 				
-				Automaton ARightEqvImpNeg = objMakeAutomaton.Negation(ARightEqvImp);
+				Automaton ARightEqvImpNeg = objMakeAutomaton.Complement(ARightEqvImp);
 				Automaton ABimpTerm2 = objMakeAutomaton.Union(ARightEqvImpNeg, ALeftEqvImp);
 				
 				Automaton A1BimpA2 = objMakeAutomaton.Intersect(ABimpTerm1, ABimpTerm2);
