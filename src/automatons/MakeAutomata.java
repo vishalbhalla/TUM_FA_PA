@@ -400,19 +400,25 @@ public class MakeAutomata {
 	 * @return
 	 */
 	public String ToString( Automaton a) {
-		// edges TODO: group the labels for the edges!!!
 		String list_of_edges = "";
+		ArrayList<String> edgelist = new ArrayList<String>();
 		for(Map.Entry<String, HashMap<String,Transitions>> transition : a.trans.entrySet()) {
 			String from = transition.getKey();
 			for(Map.Entry<String, Transitions> entry : transition.getValue().entrySet()) {
 				String to = entry.getKey();
-				list_of_edges += "\n" +  from + " -> " + to + " [label=\"" +entry.getValue().toString() + "\"];"; 
+				edgelist.add(from + " -> " + to + " [label=\"" +entry.getValue().toString() + "\"];"); 
 			}
 		}	
+		Collections.sort(edgelist);
+		for(String edge : edgelist) {
+			list_of_edges += "\n" + edge;
+		}
 					
 		// final states
 		String list_of_final_states = "";
-		for(String s : a.finalState) { // TODO: make sure its sorted
+		ArrayList<String> f = (ArrayList<String>)a.finalState.clone();
+		Collections.sort(f);
+		for(String s : f) { // TODO: make sure its sorted
 			list_of_final_states += "\n" + s + "[peripheries=2];";
 		}
 		
@@ -421,7 +427,7 @@ public class MakeAutomata {
 		
 		// free variables
 		String list_of_free_variables = "";
-		for(String v : a.variables) { // TODO: check whether they come sorted
+		for(String v : a.variables) { 
 			list_of_free_variables += v;
 		}
 		
