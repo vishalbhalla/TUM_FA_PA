@@ -487,7 +487,10 @@ public class MakeAutomata {
 			LinkedList<String> q) {
 
 		HashMap<String, Transitions> trans = A.trans.get(currentstate);
-		
+		if(trans==null) {
+			// has no outgoing edges
+			return;
+		}
 		for(Entry<String, Transitions> entry: trans.entrySet()) {
 			for(boolean[] word : entry.getValue().StateTransitionVector) {
 				if(label.length==word.length) {
