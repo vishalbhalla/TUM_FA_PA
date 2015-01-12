@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.SortedSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 public class MakeAutomata {
 
@@ -16,6 +17,74 @@ public class MakeAutomata {
 	public MakeAutomata() {	
 		
 	}
+
+	/**
+	 * generates an Automaton that accepts all words
+	 * note that this Automaton is not minimal! It has 2 States where only 1 
+	 * would be needed, done for testing the minimization algorithm.
+	 * @param varSet
+	 * @return
+	 */
+	public static Automaton FromString(String s)
+	{
+		// split into 4 Strings: edges, finalstates, startstate
+		// variables
+		String[] a = s.split("\n");
+		ArrayList<String> edges = new ArrayList<String>();
+		ArrayList<String> finals = new ArrayList<String>();
+		String s_s = "";
+		for(String line : a) {
+			if(line.contains("->")) {
+				edges.add(line);
+			} else if(line.contains("peripheries")) {
+				finals.add(line);
+			} else if(line.contains("diamond")) {
+				s_s = line;
+			}
+		}
+		String s_v = s.split("\\Q}\\E\n")[1];
+		
+		Automaton A = new Automaton();
+		
+		// startstate
+		
+		A.startState = s_s.split("\\Q[\\E")[0];
+		
+		A.variables = new TreeSet<String>();
+		
+		// variables
+		for(int i=0; i<s_v.length(); i++)
+			A.variables.add(s_v.substring(i,i+1)); // test
+		
+		// final states:
+		for(String f : finals) {
+			A.finalState.add(f.split("\\Q[\\E")[0]);
+		}
+
+		// edges
+		for(String edge : edges) {
+			String[] parts = edge.split("\\Q[\\E");
+			String from, to;
+			from = parts[0].split(" -> ")[0].trim();
+			to = parts[0].split(" -> ")[1].trim();
+			Transitions t = new Transitions();
+			HashMap<String,Transitions> hm = new HashMap<String,Transitions>();
+			A.trans.put(from, hm);
+			hm.put(to, t);
+			String[] labels = (((parts[1].split("\""))[1]).trim()).split(" ");
+			for(String label : labels) {
+				boolean[] e = new boolean[label.length()];
+				for(int i=0; i<label.length(); i++) {
+					e[i] = label.charAt(i)=='1';
+				}
+				t.addTransition(e);
+			}
+		}
+
+		return A;
+	}
+
+	
 	
 	/**
 	 * generates an Automaton that accepts all words

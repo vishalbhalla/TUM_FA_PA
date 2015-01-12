@@ -54,6 +54,35 @@ public class UnivAutomatonTest {
 		
 	}
 	
+	@Test
+	public void test_fromString() {
+
+		SortedSet<String> ss = new TreeSet<String>();
+		ss.add("x");
+		ss.add("y");
+		ss.add("z");
+		Automaton A = MakeAutomata.UniversalAutomation(ss);
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		
+		Automaton A2 = MakeAutomata.FromString(dottyformatOp);
+
+		boolean[] character = new boolean[] { true, true, true};
+		ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+		word.add(character);
+
+		// must accept (111)
+		assertTrue(MakeAutomata.member(A2, word));
+
+		word.add(character);
+
+		
+		// and also (111) (111)
+		assertTrue(MakeAutomata.member(A2, word));
+
+		
+	}
 	
 	@Test
 	public void test_project() {
