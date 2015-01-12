@@ -11,6 +11,30 @@ import automatons.MakeAutomata;
 
 public class TranslationTest {
 
+
+	private boolean notzero(int[] ints) {
+		for(int i=0; i<ints.length; i++) {
+			if(ints[i]>0) return true;
+		}
+		return false;
+	}
+	
+	private ArrayList<boolean[]> wordfromints(int[] ints) {
+		
+		ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+
+		while(notzero(ints)) {
+			boolean[] e = new boolean[ints.length];
+			for(int i=0; i<ints.length; i++) {
+				e[i] = (ints[i]%2)==1;
+				ints[i] /= 2;
+			}
+			word.add(e);
+		}
+		return word;
+	}
+	
+	
 	@Test
 	public void test_AF2DFA() {
 		MakeAutomata objMakeAutomaton = new MakeAutomata();
@@ -28,6 +52,13 @@ public class TranslationTest {
 		System.out.println(dottyformatOp);
 		
 		assertTrue(dottyformatOp!=null);
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {7})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {10})));
+		
 	}
 
 }
