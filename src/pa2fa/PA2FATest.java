@@ -37,13 +37,34 @@ public class PA2FATest {
 	
 	@Test
 	public void test_easy() throws IOException {
-		
+		System.out.println("========= TEST EASY ==========");
 		Automaton A = PA2FA.dothejob("Test/easy.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		boolean[] character = new boolean[] { true, true, true};
-		ArrayList<boolean[]> word = new ArrayList<boolean[]>();
-		word.add(character);
-
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4,0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,3})));		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {5,0})));		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,1})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,0})));
+	}
+	
+	
+	@Test
+	public void test_and() throws IOException {
+		System.out.println("========= TEST using AND ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/usingand1.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4,0})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,3})));		
