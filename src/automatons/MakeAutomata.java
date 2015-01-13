@@ -155,8 +155,8 @@ public class MakeAutomata {
 	 * @return varset
 	 */
 	public SortedSet<String> TotalVariableSet(SortedSet<String> A1Variables, SortedSet<String> A2Variables) {
-		SortedSet<String> varset = null;
-		varset = A1Variables;
+		SortedSet<String> varset = new TreeSet<String>();
+		varset.addAll(A1Variables);
 		for(String var :A2Variables)
 		{
 			if(!varset.contains(var))
@@ -229,7 +229,7 @@ public class MakeAutomata {
 		Automaton A2 = MakeAutomata.extendTo(oldA2, A.variables);
 		
 		// Set the Start state of the product automation
-		A.startState = A1.startState.toString() + A2.startState.toString();
+		A.startState = A1.startState.toString() + "_" + A2.startState.toString();
 		String oldAState = null;
 		String newAState = null;
 		
@@ -240,8 +240,8 @@ public class MakeAutomata {
 		    
 		    for (Entry<String, HashMap<String, Transitions>> entryA2 : A2.trans.entrySet()) {
 			    String keyFromStateA2 = entryA2.getKey();
-			    if(!keyFromStateA2.equals(keyFromStateA1))
-			    	continue;
+			    /*if(!keyFromStateA2.equals(keyFromStateA1))
+			    	continue;*/
 			    HashMap<String, Transitions> valueA2 = entryA2.getValue();
 			    
 			    for (Entry<String, Transitions> entryTransitionsA1 : valueA1.entrySet()) {
@@ -252,8 +252,8 @@ public class MakeAutomata {
 					    String keyToStateA2 = entryTransitionsA2.getKey();
 					    Transitions valueTransitionsA2 = entryTransitionsA2.getValue();
 				
-					    oldAState = keyFromStateA1 + keyFromStateA2;
-						newAState = keyToStateA1 + keyToStateA2;
+					    oldAState = keyFromStateA1 + "_" + keyFromStateA2;
+						newAState = keyToStateA1 + "_" + keyToStateA2;
 						HashMap<String, Transitions> newATransition = new HashMap<String, Transitions>();
 						
 					    if(valueTransitionsA1==null)
@@ -273,8 +273,9 @@ public class MakeAutomata {
 						    		if(Arrays.equals(t1, t2))
 								    {
 						    			newATransition.put(newAState, valueTransitionsA1);
-						    			A.trans.put(oldAState, newATransition);
-										if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
+						    			//A.trans.put(oldAState, newATransition);
+										/*
+						    			if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
 										{
 											if(A1.finalState.contains(keyToStateA1) || A2.finalState.contains(keyToStateA2))
 											{
@@ -292,9 +293,11 @@ public class MakeAutomata {
 												break;
 											}
 										}
+										*/
 								    }// else continue to check for next transition for same state in A2
 							    }
 						    }
+					    	A.trans.put(oldAState, newATransition); // Adding to Hashmap after getting all transitions.
 					    }
 			    
 			    }// Check for next transition for same state in A1 // End of innermost for loop for Transitions of A2
@@ -305,6 +308,43 @@ public class MakeAutomata {
 
 	}// Check transitions for next state in A1 // End of outermost and first for loop of A1
 
+		
+		//Add the final states of our newly constructed Automaon A based on the final states in each of the individual input Automatons and the flag passed for either Union or Intersection.
+		for(Entry<String, HashMap<String, Transitions>> entryA : A.trans.entrySet())
+		{
+			String keyStateA = entryA.getKey();
+			
+			for(Entry<String, HashMap<String, Transitions>> entryA1 : A1.trans.entrySet())
+			{
+				String keyStateA1 = entryA1.getKey();
+				for(Entry<String, HashMap<String, Transitions>> entryA2 : A2.trans.entrySet())
+				{
+					String keyStateA2 = entryA2.getKey();
+				    if(keyStateA.contains(keyStateA1 + "_" + keyStateA2))
+				    {
+				    	if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
+						{
+							if(A1.finalState.contains(keyStateA1) || A2.finalState.contains(keyStateA2))
+							{
+								A.finalState.add(keyStateA);
+								break;
+							}
+						}
+						else //For Intersection of 2 automata, Product automaton has a final state if and only if both the automata have final states.
+						{
+							if(A1.finalState.contains(keyStateA1) && A2.finalState.contains(keyStateA2))
+							{
+								A.finalState.add(keyStateA);
+								break;
+							}
+						}
+				    }
+				}
+				
+				if(A.finalState.contains(keyStateA))
+					break;
+			}
+		}
 		
 		return A;
 	}
