@@ -191,9 +191,9 @@ public class PA2FATest {
 
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5,9})));
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,1})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,11})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {2,11})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3,12})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,11})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {2,11})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {3,12})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4,13})));
 	}
 	
