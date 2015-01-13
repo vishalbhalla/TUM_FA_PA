@@ -98,7 +98,8 @@ public class MakeAutomata {
 		Automaton A = new Automaton();
 		A.startState = "1";
 		A.finalState.add(A.startState);
-		A.variables = varSet;
+		A.variables = new TreeSet<String>();
+		A.variables.addAll(varSet);
 
 		Transitions t = generateAllCombinations(varSet.size());
 		HashMap<String,Transitions> hm = new HashMap<String,Transitions>();
@@ -155,8 +156,8 @@ public class MakeAutomata {
 	 * @return varset
 	 */
 	public SortedSet<String> TotalVariableSet(SortedSet<String> A1Variables, SortedSet<String> A2Variables) {
-		SortedSet<String> varset = null;
-		varset = A1Variables;
+		SortedSet<String> varset = new TreeSet<String>();
+		varset.addAll(A1Variables);
 		for(String var :A2Variables)
 		{
 			if(!varset.contains(var))
@@ -176,7 +177,35 @@ public class MakeAutomata {
 	 * @return
 	 */
 	public static Automaton extendTo(Automaton A, SortedSet<String> varSet){
-		//to do Max.
+		
+		int[] transform = new int[varSet.size()];
+		{
+			int i=0;
+			for(String s : varSet) {
+				int j=0; 
+				for(String s2 : A.variables) {
+					if(s.equals(s2))
+						break;
+					j++;
+				}
+				if(j==A.variables.size()) 
+					transform[i++] = -1; 
+				else
+					transform[i++] = j;
+			}
+		}		
+		
+		A.variables = new TreeSet<String>();
+		A.variables.addAll(varSet);
+		
+		for(Map.Entry<String, HashMap<String,Transitions>> transition : A.trans.entrySet()) {
+			for(Map.Entry<String, Transitions> entry : transition.getValue().entrySet()) {
+				entry.getValue().extendTo(transform); 
+			}
+		}	
+
+		
+		
 		return A;
 	}
 	

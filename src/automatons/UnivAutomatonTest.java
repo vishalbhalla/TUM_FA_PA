@@ -26,6 +26,53 @@ public class UnivAutomatonTest {
 		
 	}
 	
+	@Test
+	public void test_extendTo() {
+		System.out.println("======= Test extendTO ======");
+		SortedSet<String> ss = new TreeSet<String>();
+		ss.add("x");
+		Automaton A = MakeAutomata.UniversalAutomation(ss);
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+
+		System.out.println("======= universalAuto with var x ======");
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		/*
+		System.out.println("======= universalAuto with var x (should change nothing) ======");
+		Automaton Aextended = MakeAutomata.extendTo(A, ss);
+		dottyformatOp = objMakeAutomaton.ToString(Aextended);
+		System.out.println(dottyformatOp);
+		*/
+		System.out.println("======= universalAuto with var x, y(should change nothing) ======");
+		ss.add("y");		
+		Automaton Aextended2 = MakeAutomata.extendTo(A, ss);
+		dottyformatOp = objMakeAutomaton.ToString(Aextended2);
+		System.out.println(dottyformatOp);
+
+		{
+			boolean[] character = new boolean[] { true, true};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Aextended2, word));
+		}{
+			boolean[] character = new boolean[] { true, false};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Aextended2, word));
+		}{
+			boolean[] character = new boolean[] { false, true};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Aextended2, word));
+		}{
+			boolean[] character = new boolean[] { false, false};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Aextended2, word));
+		}
+	}
+	
 
 	@Test
 	public void test_accept() {

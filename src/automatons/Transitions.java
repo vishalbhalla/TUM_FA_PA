@@ -71,6 +71,42 @@ public class Transitions {
 		return ret;
 	}
 
+	private void extend(int i, boolean[] cur, int[] transform, boolean[] old, TreeSet<boolean[]> tmp) {
+		if(i==transform.length) {
+			boolean[] copy = cur.clone();
+			tmp.add(copy);
+			return;
+		}
+		
+		if(transform[i]==-1) {
+			cur[i] = false;
+			extend(i+1, cur, transform, old, tmp);
+			cur[i] = true;
+			extend(i+1, cur, transform, old, tmp);
+		} else {
+			cur[i] = old[transform[i]];
+			extend(i+1, cur, transform, old, tmp);
+		}
+		
+	}
+	
+	/**
+	 * extends the labels to more variables
+	 * @param index
+	 * @author max
+	 */
+	public void extendTo(int[] transform) {
+		// extend every boolean array the component at column @index
+		TreeSet<boolean[]> tmp = new TreeSet< boolean[]>(ourComp);
+		for(boolean[] e : StateTransitionVector) {
+			boolean[] e2 = new boolean[transform.length];
+			extend(0, e2, transform, e, tmp);
+		}
+		StateTransitionVector = tmp;
+	}
+
+	
+	
 	/**
 	 * projects away the index component
 	 * @param index
