@@ -519,10 +519,16 @@ public class MakeAutomata {
 		
 		// free variables
 		String list_of_free_variables = "";
-		for(String v : a.variables) { 
-			list_of_free_variables += v;
+		if(a.variables.size()==0) {
+			if(a.finalState.contains(a.startState))
+				list_of_free_variables = "true";
+			else
+				list_of_free_variables = "false";
+		} else {
+			for(String v : a.variables) { 
+				list_of_free_variables += v;
+			}
 		}
-		
 		if(a.variables.size()==0) list_of_free_variables = "true";
 		return "digraph G {" + list_of_edges 
 						+ list_of_final_states 
