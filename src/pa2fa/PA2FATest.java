@@ -79,7 +79,7 @@ public class PA2FATest {
 		String dottyformatOp = objMakeAutomaton.ToString(A);
 		System.out.println(dottyformatOp);
 		
-		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {})));
 	}
 	
 	
@@ -182,7 +182,7 @@ public class PA2FATest {
 	public void test_ALL() throws IOException {
 		System.out.println("========= TEST using ALL ==========");
 		
-		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // Ax x - y >= 0
+		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // x<=3 || y<=10
 		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
 		String dottyformatOp = objMakeAutomaton.ToString(A);
@@ -275,38 +275,4 @@ public class PA2FATest {
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {10})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {31})));
 	}
-	
-	@Test
-	public void test_medium() throws IOException {
-		System.out.println("========= TEST using Medium ==========");
-		
-		Automaton A = PA2FA.dothejob("Test/medium.txt"); // Ax:Ey:x+y+z>14 && x-y<4
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
-		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
-		System.out.println(dottyformatOp);
-		
-		
-	}
-	
-	@Test
-	public void test_All2() throws IOException {
-		System.out.println("========= TEST using ALL2 ==========");
-		
-		Automaton A = PA2FA.dothejob("Test/testALL2.txt"); // Ax x + y >= 5
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
-		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
-		System.out.println(dottyformatOp);
-		
-		
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4})));
-		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5})));
-		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {6})));
-		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {10})));
-		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {31})));
-	}
-	
 }

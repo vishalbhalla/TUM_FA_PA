@@ -196,15 +196,20 @@ public class PA2FA {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+
+		String filename = args[0];
 		
-		Automaton out = dothejob(args[0]);
+		Automaton out = dothejob(filename);
 
 		// printing the Automaton in dotty format
 		MakeAutomata objMakeAutomaton = new MakeAutomata();		
 		String dottyformatOp = objMakeAutomaton.ToString(out);
 		
-		System.out.println(dottyformatOp);
+		String outputfilename = filename + ".dotty";
 		
+		PrintWriter pw = new PrintWriter(outputfilename);
+		pw.println(dottyformatOp);
+		pw.close();
 	}
 	
 }

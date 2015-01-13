@@ -53,7 +53,7 @@ public class OTree {
 			return "<->";
 		
 		default:
-			return "fuckyou";
+			return "ERROR";
 		}
 	}
 	public String toString() {

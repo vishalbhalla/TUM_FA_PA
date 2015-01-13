@@ -118,7 +118,6 @@ public class Translation {
 				OTree son  = ex.son;
 				Automaton ASon = pa2fa(son);
 				Automaton AEx = objMakeAutomaton.Project(ASon, varname);
-				System.out.println("automat\n" + objMakeAutomaton.ToString(AEx));
 				return objMakeAutomaton.ConvertNFAToDFA(AEx);
 				
 			case PALexer.ALL :
