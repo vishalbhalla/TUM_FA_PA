@@ -11,6 +11,8 @@ import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import org.omg.CORBA.portable.RemarshalException;
+
 public class MakeAutomata {
 
 	//Automaton automaton;
@@ -283,9 +285,11 @@ public class MakeAutomata {
 				
 					    oldAState = keyFromStateA1 + "_" + keyFromStateA2;
 						newAState = keyToStateA1 + "_" + keyToStateA2;
-						HashMap<String, Transitions> newATransition = new HashMap<String, Transitions>();
 						
-					    if(valueTransitionsA1==null)
+						
+						//HashMap<String, Transitions> newATransition = new HashMap<String, Transitions>();
+						
+					    /*if(valueTransitionsA1==null)
 					    {
 					    	newATransition.put(newAState, valueTransitionsA2);
 					    }
@@ -293,16 +297,41 @@ public class MakeAutomata {
 					    {
 					    	newATransition.put(newAState, valueTransitionsA1);
 					    }
-					    else
+					    
+					    else*/
 					    {
+					    
 					    	for( boolean[] t1 : valueTransitionsA1.StateTransitionVector)
 						    {
 						    	for( boolean[] t2 : valueTransitionsA2.StateTransitionVector)
 							    {
 						    		if(Arrays.equals(t1, t2))
 								    {
-						    			newATransition.put(newAState, valueTransitionsA1);
-						    			//A.trans.put(oldAState, newATransition);
+						    			HashMap<String, Transitions> newTransition;
+						    			Transitions myTrans;
+						    			if(A.trans.containsKey(oldAState))
+						    			{
+						    				newTransition = A.trans.get(oldAState);
+						    				if(newTransition.containsKey(newAState))
+						    				{
+						    					myTrans = newTransition.get(newAState);
+						    					
+						    				}
+						    				else
+						    				{
+						    					myTrans = new Transitions();
+						    					newTransition.put(newAState, myTrans);
+						    				}
+						    				
+						    			} else
+						    			{
+						    				newTransition = new HashMap<String, Transitions>();
+						    				myTrans = new Transitions();
+					    					newTransition.put(newAState, myTrans);
+					    					A.trans.put(oldAState, newTransition);
+						    			}
+						    			myTrans.addTransition(t1);
+						    			
 										/*
 						    			if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
 										{
@@ -326,7 +355,7 @@ public class MakeAutomata {
 								    }// else continue to check for next transition for same state in A2
 							    }
 						    }
-					    	A.trans.put(oldAState, newATransition); // Adding to Hashmap after getting all transitions.
+					    	//A.trans.put(oldAState, newATransition); // Adding to Hashmap after getting all transitions.
 					    }
 			    
 			    }// Check for next transition for same state in A1 // End of innermost for loop for Transitions of A2
@@ -349,15 +378,18 @@ public class MakeAutomata {
 				for(Entry<String, HashMap<String, Transitions>> entryA2 : A2.trans.entrySet())
 				{
 					String keyStateA2 = entryA2.getKey();
-				    if(keyStateA.contains(keyStateA1 + "_" + keyStateA2))
+				    if(keyStateA.equals(keyStateA1 + "_" + keyStateA2))
 				    {
 				    	if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
 						{
+				    		//System.out.print(keyStateA1 + "_" + keyStateA2);
 							if(A1.finalState.contains(keyStateA1) || A2.finalState.contains(keyStateA2))
 							{
+								//System.out.println(" same");
 								A.finalState.add(keyStateA);
 								break;
 							}
+							//System.out.println("");
 						}
 						else //For Intersection of 2 automata, Product automaton has a final state if and only if both the automata have final states.
 						{
@@ -376,6 +408,8 @@ public class MakeAutomata {
 		}
 		
 		return A;
+		// Remap the given DFA with new state names.
+					//return DFAWithRemappedStates(A);
 	}
 	
 	
