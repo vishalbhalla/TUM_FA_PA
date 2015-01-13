@@ -175,7 +175,9 @@ public class MakeAutomata {
 	 * @param varSet
 	 * @return
 	 */
-	public void extendTo(SortedSet<String> varSet){
+	public static Automaton extendTo(Automaton A, SortedSet<String> varSet){
+		//to do Max.
+		return A;
 	}
 	
 	
@@ -218,10 +220,13 @@ public class MakeAutomata {
 	 * @param A1, A2, boolUnion -> to determine the set of final States and is set to True for Union and False for Intersection.
 	 * @return
 	 */
-	public Automaton ProductAutomaton(Automaton A1, Automaton A2, boolean boolUnion) {
+	public Automaton ProductAutomaton(Automaton oldA1, Automaton oldA2, boolean boolUnion) {
 		
 		Automaton A =  new Automaton();
-		A.variables = TotalVariableSet(A1.variables, A2.variables);
+		A.variables = TotalVariableSet(oldA1.variables, oldA2.variables);
+		
+		Automaton A1 = MakeAutomata.extendTo(oldA1, A.variables);
+		Automaton A2 = MakeAutomata.extendTo(oldA2, A.variables);
 		
 		// Set the Start state of the product automation
 		A.startState = A1.startState.toString() + A2.startState.toString();
