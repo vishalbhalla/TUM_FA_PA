@@ -177,6 +177,25 @@ public class PA2FATest {
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4})));
 	}
+
+	@Test
+	public void test_ALL() throws IOException {
+		System.out.println("========= TEST using ALL ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // x<=3 || y<=10
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {11})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {311})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {12})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {13})));
+	}
 	
 	@Test
 	public void test_OR() throws IOException {
