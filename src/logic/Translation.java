@@ -118,7 +118,7 @@ public class Translation {
 				OTree son  = ex.son;
 				Automaton ASon = pa2fa(son);
 				Automaton AEx = objMakeAutomaton.Project(ASon, varname);
-				return AEx;
+				return objMakeAutomaton.ConvertNFAToDFA(AEx);
 				
 			case PALexer.ALL :
 				Quant ex1 = (Quant)objtree;
@@ -127,7 +127,9 @@ public class Translation {
 				Automaton ASon1 = pa2fa(son1);
 				Automaton ANegSon1 = objMakeAutomaton.Complement(ASon1);
 				Automaton AAll = objMakeAutomaton.Project(ANegSon1, varname1);
-				return AAll;
+				Automaton DFAAll = objMakeAutomaton.ConvertNFAToDFA(AAll);
+				Automaton ret = objMakeAutomaton.Complement(DFAAll);
+				return ret;
 				
 				// all the comparators starting a atomic formula
             case PALexer.EQ : { // case Ab = x, transformed to Ab <= x && !(Ab<=x-1)
