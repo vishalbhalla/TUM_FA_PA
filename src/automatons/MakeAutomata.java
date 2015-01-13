@@ -313,11 +313,7 @@ public class MakeAutomata {
 	 * @return
 	 */
 	public Automaton Intersect(Automaton A1, Automaton A2) {
-		//TODO
-		//SortedSet<String> varset = merge(this.variables, A2.variables);
-		//A2 = A2.extendTo(varset);
-		//extendTo(varset);
-			
+	
 		Automaton A1IntersectA2 = AutomatonIntersection(A1, A2);
 		return A1IntersectA2;
 	}
@@ -435,12 +431,20 @@ public class MakeAutomata {
 	 * decides if a word is accepted by this automaton 
 	 * @param word
 	 * @return
+	 * @author max
 	 */
 	public static boolean member(Automaton A, ArrayList<boolean[]> word) {
 		
 		return accepts(A, A.startState, word);
 	}
 	
+	
+	/**
+	 * decides if a word is accepted from @state by this automaton 
+	 * @param word
+	 * @return
+	 * @author max
+	 */
 	public static boolean accepts(Automaton A, String state, ArrayList<boolean[]> word) {
 		
 		LinkedList<String> queue = new LinkedList<String>();
@@ -465,6 +469,13 @@ public class MakeAutomata {
 		return false;
 	}
 
+	/**
+	 * returns whether currentstate is a finalstate
+	 * @param A
+	 * @param currentstate
+	 * @return
+	 * @author max
+	 */
 	private static boolean isfinal(Automaton A, String currentstate) {
 		return A.finalState.contains(currentstate);
 	}
@@ -476,6 +487,7 @@ public class MakeAutomata {
 	 * @param currentstate
 	 * @param label
 	 * @param q
+	 * @author max
 	 */
 	private static void add_all_labelled_edges(Automaton A, String currentstate, boolean[] label,
 			LinkedList<String> q) {
