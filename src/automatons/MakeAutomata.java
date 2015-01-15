@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.SortedSet;
@@ -19,7 +20,8 @@ public class MakeAutomata {
 	public MakeAutomata() {	
 		
 	}
-
+	
+	
 	/**
 	 * generates an Automaton that accepts all words
 	 * note that this Automaton is not minimal! It has 2 States where only 1 
@@ -268,7 +270,6 @@ public class MakeAutomata {
 		    String keyFromStateA1 = entryA1.getKey();
 		    HashMap<String, Transitions> valueA1 = entryA1.getValue();
 		    
-		    
 		    for (Entry<String, HashMap<String, Transitions>> entryA2 : A2.trans.entrySet()) {
 			    String keyFromStateA2 = entryA2.getKey();
 			    /*if(!keyFromStateA2.equals(keyFromStateA1))
@@ -286,19 +287,6 @@ public class MakeAutomata {
 					    oldAState = keyFromStateA1 + "_" + keyFromStateA2;
 						newAState = keyToStateA1 + "_" + keyToStateA2;
 						
-						
-						//HashMap<String, Transitions> newATransition = new HashMap<String, Transitions>();
-						
-					    /*if(valueTransitionsA1==null)
-					    {
-					    	newATransition.put(newAState, valueTransitionsA2);
-					    }
-					    else if(valueTransitionsA2==null)
-					    {
-					    	newATransition.put(newAState, valueTransitionsA1);
-					    }
-					    
-					    else*/
 					    {
 					    
 					    	for( boolean[] t1 : valueTransitionsA1.StateTransitionVector)
@@ -331,27 +319,7 @@ public class MakeAutomata {
 					    					A.trans.put(oldAState, newTransition);
 						    			}
 						    			myTrans.addTransition(t1);
-						    			
-										/*
-						    			if(boolUnion) //For Union of 2 automata, Product automaton has a final state if either of the 2 automata has a final state.
-										{
-											if(A1.finalState.contains(keyToStateA1) || A2.finalState.contains(keyToStateA2))
-											{
-												if(!A.finalState.contains(newAState))
-													A.finalState.add(newAState);
-												break;
-											}
-										}
-										else //For Intersection of 2 automata, Product automaton has a final state if and only if both the automata have final states.
-										{
-											if(A1.finalState.contains(keyToStateA1) && A2.finalState.contains(keyToStateA2))
-											{
-												if(!A.finalState.contains(newAState))
-													A.finalState.add(newAState);
-												break;
-											}
-										}
-										*/
+										
 								    }// else continue to check for next transition for same state in A2
 							    }
 						    }
@@ -508,6 +476,7 @@ public class MakeAutomata {
 					
 		// final states
 		String list_of_final_states = "";
+		@SuppressWarnings("unchecked")
 		ArrayList<String> f = (ArrayList<String>)a.finalState.clone();
 		Collections.sort(f);
 		for(String s : f) { // TODO: make sure its sorted
@@ -804,9 +773,6 @@ public class MakeAutomata {
 		}
 		
 		
-		
-		
-		
 		/**
 		 * Converts the given NFA to a DFA.
 		 */
@@ -815,6 +781,7 @@ public class MakeAutomata {
 			Automaton aDFA = new Automaton();
 			aDFA.startState = aNFA.startState;
 			aDFA.variables = aNFA.variables;
+			int CountOfVariables = aDFA.variables.size();
 			
 			int countOfNFAStates = aNFA.trans.size();
 			double maxCountOfDFAStates = Math.pow(2, countOfNFAStates);
@@ -823,78 +790,21 @@ public class MakeAutomata {
 			ArrayList<String> powerSetStateList = new ArrayList<String>();
 			//Keeps a track of all unprocessed states and iterates until it is empty.
 			Queue<String> queueDFANewUnprocessedStateSet = new LinkedList<String>();
-			String oldNFAState  = "";
+			String oldNFAState  = aNFA.startState;
 			
-			 //We use this to put an individual transition as a key with multiple states as its value separated by "_".
-			Map<boolean[], String> aDFATSet = new HashMap<boolean[], String>();
+			//We use this to put an individual transition as a key with multiple states as its value separated by "_".
+			//Map<boolean[], String> aDFATSet = new HashMap<boolean[], String>();
+			//Map<CustomBoolean, String> aDFATSet = new HashMap<CustomBoolean, String>();
+			ArrayList<String> aDFATransSet = new ArrayList<String>();
+			ArrayList<String> aDFAStateSet = new ArrayList<String>();
+	        
 			
 			Transitions newTransitionVector = new Transitions();
 			 //We use this to put together all the computed transitions for each state in aDFATSet.
 			Map<Transitions, String> aDFATransitionSet = new HashMap<Transitions, String>();
 			
-			
 			//We iterate only once using the below for-loop to get the first state of the NFA. It has constant run-time complexity.
 			//Moreover, it makes sure that only reachable states from the Start state are processed.
-			for (Entry<String, HashMap<String, Transitions>> entryaNFA : aNFA.trans.entrySet()) 
-			{
-			    String keyFromStateaNFA = entryaNFA.getKey();
-			    HashMap<String, Transitions> valueaNFA = entryaNFA.getValue();
-			    oldNFAState = keyFromStateaNFA;
-				
-			    for (Entry<String, Transitions> entryTransitionsaNFA : valueaNFA.entrySet())
-			    {
-			    	String keyToStateaNFA = entryTransitionsaNFA.getKey();
-				    Transitions valueTransitionsaNFA = entryTransitionsaNFA.getValue();
-				    
-				    for(boolean[] t : valueTransitionsaNFA.StateTransitionVector)
-				    {
-				    	if(aDFATSet.containsKey(t))
-					    {
-					    	String newDFAState = aDFATSet.get(t);
-					    	if(!newDFAState.contains(keyToStateaNFA.toString().trim()))
-					    	{
-					    		if(newDFAState.contains("_"))
-							    {
-							    	String[] newIndividualStates = new String[(int) maxCountOfDFAStates];
-							    	newIndividualStates = newDFAState.split("_");
-							    	ArrayList<Integer> intnewIndividualStates = new ArrayList<Integer>(); 
-							    	
-							    	for(String nxtIndividualState : newIndividualStates)
-								    {
-							    		intnewIndividualStates.add(Integer.parseInt(nxtIndividualState));
-							    	}
-							    	
-							    	intnewIndividualStates.add(Integer.parseInt(keyToStateaNFA));
-							    	Collections.sort(intnewIndividualStates); //Sort to keep it as same state. Example: 1_2_3 and 2_3_1 are the same states and represented by only 1_2_3.
-							    	
-							    	newDFAState = "";
-							    	for(Integer i : intnewIndividualStates)
-							    	{
-							    		if(newDFAState == "")
-							    			newDFAState += i;
-							    		else
-							    			newDFAState += "_" + i;
-							    	}
-							    }
-							    else
-							    {
-							    	if(Integer.parseInt(keyToStateaNFA) < Integer.parseInt(newDFAState))
-							    		newDFAState = keyToStateaNFA + "_" + newDFAState;
-							    	else
-							    		newDFAState += "_" +keyToStateaNFA;
-							    }
-							    aDFATSet.remove(t);
-						    	aDFATSet.put(t, newDFAState);
-						    }
-					    }
-					    else // for the first transition and when there are intermediate single transitions
-					    {
-					    	aDFATSet.put(t, keyToStateaNFA);
-					    }	
-				    }		
-			    }
-				break;
-			}
 			
 			//Add the missing transitions to a dead state as it is a DFA.
 		    String deadState = "0";
@@ -905,70 +815,17 @@ public class MakeAutomata {
 		    
 			//Iterate through all the computed transitions in aDFATSet and add it based on the state.
 			//Note that Transition set has String i.e. the state name as its key.
-			for(String nxtState : aDFATSet.values())
-		    {
-				if(aDFATransitionSet.containsValue(nxtState))
-					 continue;
-				for( boolean[] transition : aDFATSet.keySet())
-			    {
-					String returnedState = aDFATSet.get(transition);
-					if(nxtState.equalsIgnoreCase(returnedState))
-						newTransitionVector.StateTransitionVector.add(transition);
-					
-					//Remove all the matching transitions so as to arrive at the missing ones to be pointed at the dead state.
-					if(tAllTransitions.StateTransitionVector.contains(transition))
-						tAllTransitions.StateTransitionVector.remove(transition);
-			    }
-				aDFATransitionSet.put(newTransitionVector, nxtState);
-				newTransitionVector = new Transitions();
-		    }
-			
-			//Check if there are missing transitions. If yes, then add them, pointing to the dead state.
-		    if(!tAllTransitions.StateTransitionVector.isEmpty())
-		    {
-		    	//Pointed all the missing transitions to the dead state.
-		    	aDFATransitionSet.put(tAllTransitions, deadState);
-
-				//As we are guaranteed about a dead state in the DFA. Lets add all the transitions emerging from it to itself.
-		    	HashMap<String, Transitions> deadStateDFATransition = new HashMap<String, Transitions>();
-		    	deadStateDFATransition.put(deadState, copyOftAllTransitions);
-				aDFA.trans.put(deadState, deadStateDFATransition);
-				powerSetStateList.add(deadState);
-		    }
-			
-			aDFATSet.clear();
 			
 			powerSetStateList.add(oldNFAState);
+			queueDFANewUnprocessedStateSet.add(oldNFAState);
 			
-			HashMap<String, Transitions> newFirstDFATransitions = new HashMap<String, Transitions>();
+			//HashMap<String, Transitions> newFirstDFATransitions = new HashMap<String, Transitions>();
 		    
 			//Add this newly created Transition Set into the NFA Transition map created above.
-			for (Map.Entry<Transitions, String> entry : aDFATransitionSet.entrySet()) 
-		    {
-		        Transitions multipleTransitions = entry.getKey();
-		        String newDFAState = entry.getValue();
-		        newFirstDFATransitions.put(newDFAState, multipleTransitions);
-				
-				for(String finalState : aNFA.finalState)
-				{
-					if(newDFAState.contains(finalState.toString().trim()))
-					{
-						if(!aDFA.finalState.contains(newDFAState))
-							aDFA.finalState.add(newDFAState);
-						break;
-					}
-				}
-				//Add  all unprocessed new states generated from the first state of the NFA which we will iterate later.
-				if(!powerSetStateList.contains(newDFAState))
-				{
-					queueDFANewUnprocessedStateSet.add(newDFAState);
-					powerSetStateList.add(newDFAState);
-				}
-		    }
+			
 			//Add all the transitions to the New states from the Old state into the DFA now.
-			aDFA.trans.put(oldNFAState, newFirstDFATransitions);
 			aDFATransitionSet.clear();
-			aDFATSet.clear();
+			aDFATransSet.clear();
 			boolean processNextState = false;
 			
 			//Process all unprocessed new states generated from the first state of the NFA above.
@@ -1001,14 +858,28 @@ public class MakeAutomata {
 					    {
 					    	String keyToStateaNFA = entryTransitionsaNFA.getKey();
 						    Transitions valueTransitionsaNFA = entryTransitionsaNFA.getValue();
-						    
 						    for(boolean[] t : valueTransitionsaNFA.StateTransitionVector)
 						    {
-						    	if(aDFATSet.containsKey(t))
-							    {
-							    	String newDFAState = aDFATSet.get(t);
-							    	
-							    	if(!newDFAState.contains(keyToStateaNFA.toString().trim()))
+						    	String strArrayTransitions = "";
+								int iTrans=1;
+								for(boolean bool : t)
+								{
+									if(bool)
+										strArrayTransitions += "1";
+									else
+										strArrayTransitions += "0";
+									iTrans++;
+									if(iTrans<CountOfVariables)
+										strArrayTransitions += "*";
+								}
+						    	
+						    	if(aDFATransSet.contains(strArrayTransitions)) 
+								{
+						    		int indexOfTransition = aDFATransSet.indexOf(strArrayTransitions);
+						    		String oldDFAState =  aDFAStateSet.get(indexOfTransition);
+						    		String newDFAState =  aDFAStateSet.get(indexOfTransition);
+						    		
+						    		if(!newDFAState.contains(keyToStateaNFA.toString().trim()))
 							    	{
 							    		if(newDFAState.contains("_"))
 									    {
@@ -1022,7 +893,7 @@ public class MakeAutomata {
 									    	}
 									    	
 									    	intnewIndividualStates.add(Integer.parseInt(keyToStateaNFA));
-									    	Collections.sort(intnewIndividualStates);
+									    	Collections.sort(intnewIndividualStates); //Sort to keep it as same state. Example: 1_2_3 and 2_3_1 are the same states and represented by only 1_2_3.
 									    	
 									    	newDFAState = "";
 									    	for(Integer i : intnewIndividualStates)
@@ -1040,20 +911,22 @@ public class MakeAutomata {
 									    	else
 									    		newDFAState += "_" +keyToStateaNFA;
 									    }
-									    aDFATSet.remove(t);
-								    	aDFATSet.put(t, newDFAState);
+							    		
+							    		aDFAStateSet.remove(oldDFAState);
+							    		aDFAStateSet.add(newDFAState);
 								    }
 							    }
 							    else // for the first transition and when there are intermediate single transitions
 							    {
-							    	aDFATSet.put(t, keyToStateaNFA);
+							    	aDFATransSet.add(strArrayTransitions);
+							    	aDFAStateSet.add(keyToStateaNFA);
 							    }	
-						    }			
+						    }		
+						    	}
 					    }
+						break;
 					}
-					
-			    }
-			    
+						    
 			  //Add the missing transitions to a dead state as it is a DFA.
 			  //Generate all transitions.
 			  //Note: Can't reuse copyOftAllTransitions which contains the list of all transitions due to properties of the Transition class.
@@ -1063,13 +936,28 @@ public class MakeAutomata {
 			    
 			    if(!processNextState)
 				{
-					for(String nxtState : aDFATSet.values())
+					for(String nxtState : aDFAStateSet)
 				    {
 						if(aDFATransitionSet.containsValue(nxtState))
 							 continue;
-						for( boolean[] transition : aDFATSet.keySet())
+						for( String strTransition : aDFATransSet)
 					    {
-							String returnedState = aDFATSet.get(transition);
+							boolean[] transition = new boolean[CountOfVariables];
+							String[] arr;
+							
+							if(strTransition.contains("*"))
+								arr = strTransition.split("*");
+							else
+								arr = strTransition.split("");
+							
+							int i=0;
+							for(String a : arr)
+							{
+								transition[i] = Boolean.getBoolean(a);
+								i++;
+							}
+							int indexOfTransition = aDFATransSet.indexOf(strTransition);
+							String returnedState = aDFAStateSet.get(indexOfTransition);
 							if(nxtState.equalsIgnoreCase(returnedState))
 								newTransitionVector.StateTransitionVector.add(transition);
 							
@@ -1098,20 +986,38 @@ public class MakeAutomata {
 					    	}
 					    }
 					
-					aDFATSet.clear();
+					aDFATransSet.clear();
+					aDFAStateSet.clear();
 					
 					HashMap<String, Transitions> newDFATransitions = new HashMap<String, Transitions>();
 				    
+					if(aDFA.trans.containsKey(oldNFAState)) {
+						newDFATransitions = aDFA.trans.get(oldNFAState);
+						} else {
+						newDFATransitions = new HashMap<String, Transitions>();
+						aDFA.trans.put(oldNFAState, newDFATransitions);
+						}
+					
+					
 					for (Entry<Transitions, String> entry : aDFATransitionSet.entrySet()) 
 				    {
 				        Transitions multipleTransitions = entry.getKey();
 				        String newDFAState = entry.getValue();
-				        newDFATransitions.put(newDFAState, multipleTransitions);
+				        //newDFATransitions.put(newDFAState, multipleTransitions);
 						
+				        if(newDFATransitions.containsKey(newDFAState)) {
+				        	Transitions t = newDFATransitions.get(newDFAState);
+				        	t.StateTransitionVector.addAll(multipleTransitions.StateTransitionVector);
+				        	} else {
+				        	newDFATransitions.put(newDFAState, multipleTransitions);
+				        	}
+				        
+				        
 						for(String finalState : aNFA.finalState)
 						{
-							if(newDFAState.contains(finalState.toString().trim()))
-							{
+							if(newDFAState.contains("_" + finalState.toString().trim()) || newDFAState.contains(finalState.toString().trim() + "_") ||
+									newDFAState.equals(finalState.toString().trim()))
+									 							{
 								if(!aDFA.finalState.contains(newDFAState))
 									aDFA.finalState.add(newDFAState);
 								break;
@@ -1124,23 +1030,27 @@ public class MakeAutomata {
 						}
 				    }
 					//Add all the transitions to the New states from the Old state into the DFA now.
-					aDFA.trans.put(oldNFAState, newDFATransitions);
+					//aDFA.trans.put(oldNFAState, newDFATransitions);
 					aDFATransitionSet.clear();
 				}
 			}
 			
-			//return aDFA;
+			if(aNFA.finalState.contains(aDFA.startState.trim()))
+				{
+				   if(!aDFA.finalState.contains(aDFA.startState))
+				      aDFA.finalState.add(aDFA.startState);
+				}
+			
 			// Remap the given DFA with new state names.
 			return DFAWithRemappedStates(aDFA);
 		}
-		
-		
+	
 		/**
 		 * Remap the given DFA with new state names.
 		 */
 		public Automaton DFAWithRemappedStates(Automaton A) {
 			Automaton ADFAWithRemappedStates = new Automaton();
-			ADFAWithRemappedStates.startState = A.startState;
+			//ADFAWithRemappedStates.startState = A.startState;
 			ADFAWithRemappedStates.variables = A.variables;
 			
 			Map<String, Integer> mappings = new HashMap<String, Integer>();
@@ -1149,7 +1059,10 @@ public class MakeAutomata {
 			{
 			    mappings.put(entryA.getKey(), i);
 			    i++;
-			}	
+			}
+			
+			//Set the Start State.
+			ADFAWithRemappedStates.startState = Integer.toString(mappings.get(A.startState));
 			
 			for (Entry<String, HashMap<String, Transitions>> entry : A.trans.entrySet()) 
 			{
