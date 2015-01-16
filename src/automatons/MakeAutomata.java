@@ -792,9 +792,7 @@ public class MakeAutomata {
 			Queue<String> queueDFANewUnprocessedStateSet = new LinkedList<String>();
 			String oldNFAState  = aNFA.startState;
 			
-			//We use this to put an individual transition as a key with multiple states as its value separated by "_".
-			//Map<boolean[], String> aDFATSet = new HashMap<boolean[], String>();
-			//Map<CustomBoolean, String> aDFATSet = new HashMap<CustomBoolean, String>();
+			//We use this to put an individual transition in an ArrayList and another ArrayList to store the multiple states separated by "_". Both these ArrayLists are mapped by the same index position.
 			ArrayList<String> aDFATransSet = new ArrayList<String>();
 			ArrayList<String> aDFAStateSet = new ArrayList<String>();
 	        
@@ -819,14 +817,9 @@ public class MakeAutomata {
 			powerSetStateList.add(oldNFAState);
 			queueDFANewUnprocessedStateSet.add(oldNFAState);
 			
-			//HashMap<String, Transitions> newFirstDFATransitions = new HashMap<String, Transitions>();
-		    
 			//Add this newly created Transition Set into the NFA Transition map created above.
 			
 			//Add all the transitions to the New states from the Old state into the DFA now.
-			aDFATransitionSet.clear();
-			aDFATransSet.clear();
-			boolean processNextState = false;
 			
 			//Process all unprocessed new states generated from the first state of the NFA above.
 			//We add only new states and not states which were processed earlier and the while loop is executed until there are no new states.
@@ -837,12 +830,10 @@ public class MakeAutomata {
 			    if(nextUnprocessedState.contains("_"))
 			    {
 			    	unprocessedIndividualStates = nextUnprocessedState.split("_");
-			    	processNextState = true;
 			    }
 			    else
 			    {
 			    	unprocessedIndividualStates[0] = nextUnprocessedState;
-			    	processNextState = false;
 			    }
 			    
 			    oldNFAState = nextUnprocessedState;
@@ -870,11 +861,11 @@ public class MakeAutomata {
 										strArrayTransitions += "0";
 									iTrans++;
 									if(iTrans<CountOfVariables)
-										strArrayTransitions += "*";
+										strArrayTransitions += "-";
 								}
-						    	
+								
 						    	if(aDFATransSet.contains(strArrayTransitions)) 
-								{
+						    	{	
 						    		int indexOfTransition = aDFATransSet.indexOf(strArrayTransitions);
 						    		String oldDFAState =  aDFAStateSet.get(indexOfTransition);
 						    		String newDFAState =  aDFAStateSet.get(indexOfTransition);
@@ -914,8 +905,8 @@ public class MakeAutomata {
 							    		
 							    		aDFAStateSet.remove(oldDFAState);
 							    		aDFAStateSet.add(newDFAState);
-								    }
-							    }
+						    	}
+						    	}
 							    else // for the first transition and when there are intermediate single transitions
 							    {
 							    	aDFATransSet.add(strArrayTransitions);
@@ -932,10 +923,6 @@ public class MakeAutomata {
 			  //Note: Can't reuse copyOftAllTransitions which contains the list of all transitions due to properties of the Transition class.
 			    tAllTransitions = generateAllCombinations(aDFA.variables.size());
 			    
-			    processNextState = false;
-			    
-			    if(!processNextState)
-				{
 					for(String nxtState : aDFAStateSet)
 				    {
 						if(aDFATransitionSet.containsValue(nxtState))
@@ -943,10 +930,10 @@ public class MakeAutomata {
 						for( String strTransition : aDFATransSet)
 					    {
 							boolean[] transition = new boolean[CountOfVariables];
-							String[] arr;
+							String[] arr = new String[CountOfVariables];
 							
-							if(strTransition.contains("*"))
-								arr = strTransition.split("*");
+							if(strTransition.contains("-"))
+								arr = strTransition.split("-");
 							else
 								arr = strTransition.split("");
 							
@@ -1032,7 +1019,6 @@ public class MakeAutomata {
 					//Add all the transitions to the New states from the Old state into the DFA now.
 					//aDFA.trans.put(oldNFAState, newDFATransitions);
 					aDFATransitionSet.clear();
-				}
 			}
 			
 			if(aNFA.finalState.contains(aDFA.startState.trim()))
