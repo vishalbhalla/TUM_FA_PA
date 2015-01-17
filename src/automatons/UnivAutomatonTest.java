@@ -10,6 +10,12 @@ import org.junit.Test;
 
 public class UnivAutomatonTest {
 
+	
+	
+
+
+	
+	
 	@Test
 	public void test() {
 		SortedSet<String> ss = new TreeSet<String>();
@@ -24,6 +30,27 @@ public class UnivAutomatonTest {
 		
 		assertTrue(dottyformatOp!=null);
 		
+	}
+	
+	
+	@Test
+	public void test_determinize() {
+		System.out.println("======= Test determinize ======");
+		SortedSet<String> ss = new TreeSet<String>();
+		ss.add("x");
+		Automaton A = MakeAutomata.UniversalAutomation(ss);
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		System.out.println("======= universalAuto with var x ======");
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+
+		System.out.println("======= NFA2DFA ======");
+		ss.add("y");		
+		Automaton Adet = MakeAutomata.determinize(A);
+		String Adetout = objMakeAutomaton.ToString(Adet);
+		System.out.println(Adetout);
+	
 	}
 	
 	
@@ -105,6 +132,9 @@ public class UnivAutomatonTest {
 			assertTrue(MakeAutomata.member(Aextended2, word));
 		}
 	}
+	
+	
+	
 	
 
 	@Test

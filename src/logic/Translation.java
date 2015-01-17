@@ -118,7 +118,12 @@ public class Translation {
 				OTree son  = ex.son;
 				Automaton ASon = pa2fa(son);
 				Automaton AEx = objMakeAutomaton.Project(ASon, varname);
-				return objMakeAutomaton.ConvertNFAToDFA(AEx);
+				System.out.println((new MakeAutomata()).ToString(AEx));
+				Automaton ADet = MakeAutomata.determinize(AEx);
+				System.out.println((new MakeAutomata()).ToString(ADet));
+				Automaton AMin = MakeAutomata.minimize(ADet);
+				System.out.println((new MakeAutomata()).ToString(AMin));
+				return AMin;
 				
 			case PALexer.ALL :
 				Quant ex1 = (Quant)objtree;
@@ -127,8 +132,9 @@ public class Translation {
 				Automaton ASon1 = pa2fa(son1);
 				Automaton ANegSon1 = objMakeAutomaton.Complement(ASon1);
 				Automaton AAll = objMakeAutomaton.Project(ANegSon1, varname1);
-				Automaton DFAAll = objMakeAutomaton.ConvertNFAToDFA(AAll);
-				Automaton ret = objMakeAutomaton.Complement(DFAAll);
+				Automaton DFAAll = MakeAutomata.determinize(AAll);
+				Automaton DFAmin = MakeAutomata.minimize(DFAAll);
+				Automaton ret = objMakeAutomaton.Complement(DFAmin);
 				return ret;
 				
 				// all the comparators starting a atomic formula
@@ -159,8 +165,12 @@ public class Translation {
 				int rightside = objAF.rightside;
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
-								
-				return objMakeAutomaton.Complement(AF2DFA(rightside-1, objlsvar, objlscoeff));
+			
+				Automaton A = AF2DFA(rightside-1, objlsvar, objlscoeff);
+				System.out.println((new MakeAutomata()).ToString(A));
+				Automaton Ac = objMakeAutomaton.Complement(A);
+				System.out.println((new MakeAutomata()).ToString(Ac));
+				return Ac;
 			}
             case PALexer.LEQ : { // standard case <=
 				AF objAF = (AF)objtree;

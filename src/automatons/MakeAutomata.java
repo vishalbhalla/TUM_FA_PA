@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -14,8 +13,6 @@ import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
-import org.antlr.works.ate.analysis.ATEAnalysisColumn;
-import org.omg.CORBA.portable.RemarshalException;
 
 class Pair<A,B> {
 
@@ -324,10 +321,8 @@ public class MakeAutomata {
 						// also from the worklist
 						W.remove(B);
 						// naiv: add both, but only one is necesary (put the smallest TODO)
-						if(p.f.size()<p.s.size())
-							W.add(p.f);
-						else
-							W.add(p.s);
+						W.add(p.f);
+						W.add(p.s);
 					}
 				}
 			}
@@ -395,7 +390,8 @@ public class MakeAutomata {
 		
 		//startstate
 		A.startState = Integer.toString(renaming.get(A1.startState));
-		
+		System.out.println("before num of states" + A1.trans.keySet().size());
+		System.out.println("after num of states" + A.trans.keySet().size());
 		
 		return A;
 	}
@@ -561,7 +557,8 @@ public class MakeAutomata {
 			}
 		}
 		
-		return A;
+		// minimize the automaton here 		
+		return minimize(A);
 		// Remap the given DFA with new state names.
 					//return DFAWithRemappedStates(A);
 	}
@@ -606,12 +603,49 @@ public class MakeAutomata {
 				break;
 			index++;
 		}
-		
+		A1.variables.remove(variableName);
 		for(Map.Entry<String, HashMap<String,Transitions>> transition : A1.trans.entrySet()) {
 			for(Map.Entry<String, Transitions> entry : transition.getValue().entrySet()) {
 				entry.getValue().project(index); 
 			}
 		}	
+		
+		// Do the Padding
+		boolean change = true;
+		while(change) {
+			change = false;
+			// go through all transitions:
+			for(Map.Entry<String, HashMap<String, Transitions>> me : A1.trans.entrySet()) {
+				if(!A1.finalState.contains(me.getKey())) {
+					// not in finalState, we might possibly add it
+					for(Map.Entry<String, Transitions> me2 : me.getValue().entrySet()) {
+						if(A1.finalState.contains(me2.getKey())) {
+							// where it heads to is final, it might be final
+							// if there goes a onlyZero label
+							for(boolean[] e : me2.getValue().StateTransitionVector) {
+								boolean allZeros=true;
+								for(int i=0; i<A1.variables.size(); i++) {
+									if(e[i]) {
+										allZeros=false;
+										break;
+									}
+								}
+								if(allZeros) {
+									// have to pad = insert into final states
+									if(!A1.finalState.contains(me.getKey())) {
+										A1.finalState.add(me.getKey());
+										change = true;
+									}
+								}
+							}
+						}
+					}
+				}				
+			}			
+		}
+		
+		
+		
 		return A1;
 	}
 		
@@ -959,8 +993,104 @@ public class MakeAutomata {
 		}
 		
 		
+
+		public static Automaton determinize(Automaton aNFA) 
+		{
+			Automaton DFA = new Automaton();
+			DFA.variables = new TreeSet<String>();
+			DFA.variables.addAll(aNFA.variables);
+			int dim = aNFA.variables.size();
+		
+			Queue<Set<String>> W = new LinkedList<Set<String>>();
+			Set<String> s = new HashSet<String>();
+			s.add(aNFA.startState);
+			W.add(s);
+			
+			Map<Set<String>, String> rename = new HashMap<Set<String>, String>();
+			int newstatename = 0;
+			DFA.startState = Integer.toString(newstatename++);
+			rename.put(s, DFA.startState);
+						
+			while(!W.isEmpty()) {
+				Set<String> curS = W.poll();
+				String DFAname = rename.get(curS);
+				
+				if(DFA.trans.containsKey(DFAname)) {
+					// allready worked on that StateSet
+					continue;
+				}
+				HashMap<String, Transitions> tr = new HashMap<String, Transitions>();
+				DFA.trans.put(DFAname, tr);
+				
+				// care about the transitions
+				for(int i=0; i<(1 << dim); i++) {
+					int x = i;
+					boolean[] e = new boolean[dim];
+					for(int j=0; j<dim; j++) {
+						e[j] = x%2==1;
+						x/=2;
+					}
+					Set<String> toS = new HashSet<String>();
+					for(String subS : curS) {
+						// now add the state that is reached from subS via an edge labelled e
+						for(Map.Entry<String, Transitions> entry : aNFA.trans.get(subS).entrySet()) {
+							String to = entry.getKey();
+							for(boolean[] e2 : entry.getValue().StateTransitionVector) {								
+								boolean same = true;
+								for(int j=0; j<dim; j++) {
+									if(e[j]!=e2[j]) {
+										same = false; break;
+									}
+								}
+								if(same) {
+									toS.add(to);
+									break; // if it is already in, more cant be done!
+								}
+							}
+						}
+					}
+					// now we know for label e where we go from state curS
+					// add the toS to the StateMap rename 
+					String NFAStatename;
+					if(rename.containsKey(toS)) {
+						NFAStatename = rename.get(toS);
+					} else {
+						NFAStatename = Integer.toString(newstatename++);
+						rename.put(toS, NFAStatename);
+					}
+					// and the Transition to DFA
+					Transitions t;
+					if(tr.containsKey(NFAStatename)) {
+						t = tr.get(NFAStatename);
+					} else {
+						t = new Transitions();
+						tr.put(NFAStatename, t);
+					}
+					t.addTransition(e);
+					
+					// also add toS to the worklist
+					W.add(toS);
+				}
+				
+				// care about whether this state is final
+				boolean fin = false;
+				for(String subS : curS) {
+					if(aNFA.finalState.contains(subS)) {
+						fin = true;
+						break;
+					}
+				}
+				if(fin)
+					DFA.finalState.add(DFAname);
+			}
+			
+			
+			return DFA;
+		}
+		
 		/**
 		 * Converts the given NFA to a DFA.
+		 * @author vishal
 		 */
 		public Automaton ConvertNFAToDFA(Automaton aNFA) 
 		{

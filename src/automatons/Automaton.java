@@ -1,10 +1,8 @@
 package automatons;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 
 

@@ -249,7 +249,7 @@ public class PA2FATest {
 	public void test_ALL() throws IOException {
 		System.out.println("========= TEST using ALL ==========");
 		
-		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // x<=3 || y<=10
+		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // Ax x - y >= 0
 		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
 		String dottyformatOp = objMakeAutomaton.ToString(A);
@@ -353,12 +353,76 @@ public class PA2FATest {
 		String dottyformatOp = objMakeAutomaton.ToString(A);
 		System.out.println(dottyformatOp);
 		
-		
+		for(int i=0; i<=16; i++) {
+			for(int j=0; j<=16-i; j++) {
+				for(int k=0; k<=16-i-j; k++) {
+					System.out.print(i + " " + j + " " + k + " -> " );
+					boolean erg = MakeAutomata.member(A, wordfromints(new int[] {i,j,k}));
+					if((i<15 && j>=15) && i+j+k <=15) {
+						//if(!erg) System.out.println("should be True but isnt -----------\n");
+						//else  System.out.println("should be True and is\n");
+						assertTrue(erg);						
+					} else {
+						//if(erg) System.out.println("should be False but isnt -----------\n");
+						//else  System.out.println("should be False and is\n");
+						assertFalse(erg);
+					}
+				}
+			}
+		}
+		/*
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,15,0})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,0,0})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1,15,0})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,15,1})));
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {15,15,15})));
+		
+		// with renaming:
+		
+		Automaton Are = objMakeAutomaton.DFAWithRemappedStates(A);
+		
+		dottyformatOp = objMakeAutomaton.ToString(Are);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(Are, wordfromints(new int[] {0,15,0})));
+		assertFalse(MakeAutomata.member(Are, wordfromints(new int[] {0,0,0})));
+		assertFalse(MakeAutomata.member(Are, wordfromints(new int[] {1,15,0})));
+		assertFalse(MakeAutomata.member(Are, wordfromints(new int[] {0,15,1})));
+		assertFalse(MakeAutomata.member(Are, wordfromints(new int[] {15,15,15})));
+		
+		
+		// with minimization:
+		
+		Automaton Amin = MakeAutomata.minimize(Are);
+		
+		dottyformatOp = objMakeAutomaton.ToString(Amin);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0,15,0})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {0,0,0})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {1,15,0})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {0,15,1})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {15,15,15})));
+		*/
+	}
+	
+	
+	@Test
+	public void test_MoritzTest3_2() throws IOException {
+		System.out.println("========= TEST using Moritz Test3 ' ==========");
+		
+		Automaton A = PA2FA.dothejob("Test/test3_2.txt"); // Ez x+y+z+u>=15
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,0,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {11,1,1})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5,0,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {15,0,0})));
+		//assertTrue(MakeAutomata.member(A, wordfromints(new int[] {25})));
 	}
 	
 	@Test
@@ -372,10 +436,10 @@ public class PA2FATest {
 		System.out.println(dottyformatOp);
 		
 		
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {1})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {5})));
-		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {15})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {5})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {15})));
 		//assertTrue(MakeAutomata.member(A, wordfromints(new int[] {25})));
 	}
 	
