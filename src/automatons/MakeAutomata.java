@@ -4,15 +4,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import org.antlr.works.ate.analysis.ATEAnalysisColumn;
 import org.omg.CORBA.portable.RemarshalException;
+
+class Pair<A,B> {
+
+    public Pair(A a, B b) {
+    	f=a;
+    	s=b;
+    }
+	public A f;
+    public B s;
+    
+    
+}
+
 
 public class MakeAutomata {
 
@@ -213,6 +229,176 @@ public class MakeAutomata {
 		return A;
 	}
 	
+	
+	/**
+	 * calculates for Automaton At the partition of States from X that on transitions labelled with
+	 * label go into Y or not
+	 * @param At
+	 * @param X
+	 * @param Y
+	 * @param label
+	 * @return
+	 */
+	public static Pair<Set<String>, Set<String>> splits(Automaton At, Set<String> X, Set<String> Y, int label) {
+		if(X.size()<=1 || Y.size()==0) {
+			Set<String> X0 = new HashSet<String>();
+			return new Pair<Set<String>, Set<String>>(X0,X);
+		}
+		
+		Set<String> X0 = new HashSet<String>();
+		Set<String> X1 = new HashSet<String>();
+		int dim = At.variables.size();
+		boolean[] e = new boolean[dim];
+		for(int i=0; i<dim; i++) {
+			e[i] = label%2==1;
+			label /=2;
+		}
+		for(String s : X) {
+			boolean found = false;
+			for(Map.Entry<String, Transitions> entry: At.trans.get(s).entrySet()) {
+				for(boolean[] e2 : entry.getValue().StateTransitionVector) {
+					boolean same = true;
+					for(int i=0; i<dim; i++) {
+						if(e[i] != e2[i]) {
+							same = false;
+							break;
+						}
+					}
+					if(same) {
+						if(Y.contains(entry.getKey())) {
+							// iff the destination is in X, add to X0
+							X0.add(s);
+						} else {
+							X1.add(s);							
+						}
+						found = true;
+						break; // this has to be a dfa, so we can stop now
+					}
+				}
+				if(found) break;
+			}			
+		}
+		return new Pair<Set<String>, Set<String>>(X0,X1);
+	}
+	
+	public static Map<String, Integer>  lanpar(Automaton At) {
+		
+		int maxlabel = 1 << At.variables.size();
+		
+		Set<Set<String>> P = new HashSet<Set<String>>();
+		Set<String> F = new HashSet<String>();
+		Set<String> nF = new HashSet<String>();
+		for(String s : At.trans.keySet()) {
+			if(At.finalState.contains(s))
+				F.add(s);
+			else
+				nF.add(s);
+		}
+		P.add(F);
+		P.add(nF);
+		
+		/*
+		 * here I decide to use only the State Set inside of the Workinglist
+		 * and not the pair of StateSet and label (which would be more efficient)
+		 */
+		Queue<Set<String>> W = new LinkedList<Set<String>>();
+		if(F.size()<nF.size())
+			W.add(F);
+		else
+			W.add(nF);
+		while(!W.isEmpty()) {
+			Set<String> A = W.poll();
+			for(int i=0; i<maxlabel; i++) {
+				// go through all Partitions, and decide whether A splits it
+				Queue<Set<String>> W2 = new LinkedList<Set<String>>();
+				W2.addAll(P);
+				while(!W2.isEmpty()) {
+					Set<String> B = W2.poll();
+					Pair<Set<String>, Set<String>> p = splits(At, B, A, i);
+					if(p.f.size() > 0 && p.s.size() > 0) {
+						// remove B from P, and add p.f p.s
+						P.remove(B);
+						P.add(p.f);
+						P.add(p.s);
+						
+						// also from the worklist
+						W.remove(B);
+						// naiv: add both, but only one is necesary (put the smallest TODO)
+						if(p.f.size()<p.s.size())
+							W.add(p.f);
+						else
+							W.add(p.s);
+					}
+				}
+			}
+		}
+		
+
+		Map<String, Integer> renameing = new HashMap<String, Integer>();
+		int i=0;
+		for(Set<String> partition : P) {
+			// every State in this partition will be mapped to i
+			for(String s : partition) {
+				renameing.put(s,i);
+			}
+			i++;
+		}
+		
+		return renameing;
+	}
+	
+	
+	/**
+	 * minimizes the Automaton A1
+	 * @param A1
+	 * @return
+	 */
+	public static Automaton minimize(Automaton A1) {
+		
+		Automaton A = new Automaton();
+		A.variables = new TreeSet<String>();
+		A.variables.addAll(A1.variables);
+		
+
+		Map<String, Integer> renaming = lanpar(A1);
+		
+		//transitions
+		for(Map.Entry<String, HashMap<String, Transitions>> entry: A1.trans.entrySet()) {
+			HashMap<String, Transitions> out;
+			String mpdFrom = Integer.toString(renaming.get(entry.getKey()));
+			if(A.trans.containsKey(mpdFrom)) {
+				out = A.trans.get(mpdFrom);
+			} else {
+				out = new HashMap<String, Transitions>();
+				A.trans.put(mpdFrom, out);
+			}
+			for(Map.Entry<String, Transitions> t : entry.getValue().entrySet()) {
+				Transitions tr;
+				String mpdTo = Integer.toString(renaming.get(t.getKey()));
+				if(out.containsKey(mpdTo)) {
+					tr = out.get(mpdTo);
+				} else {
+					tr = new Transitions();
+					out.put(mpdTo, tr);
+				}
+				tr.StateTransitionVector.addAll(t.getValue().StateTransitionVector);				
+			}
+		}
+		
+		//final states
+		A.finalState = new ArrayList<String>();
+		for(String s : A1.finalState) {
+			String mpd = Integer.toString(renaming.get(s));
+			if(!A.finalState.contains(mpd))
+					A.finalState.add(mpd);
+		}
+		
+		//startstate
+		A.startState = Integer.toString(renaming.get(A1.startState));
+		
+		
+		return A;
+	}
 	
 
 	

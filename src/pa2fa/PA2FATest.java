@@ -34,6 +34,73 @@ public class PA2FATest {
 		return word;
 	}
 	
+	
+	@Test
+	public void test_easyrevmin() throws IOException {
+		System.out.println("========= TEST EASYrev with minimization ==========");
+		Automaton A = PA2FA.dothejob("Test/easyrev.txt");
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {4,0})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {3,0})));		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0,5})));		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1,0})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,1})));
+		
+		System.out.println("minimized Automaton");
+		Automaton Amin = MakeAutomata.minimize(A);
+		String dottyformatOpmin = objMakeAutomaton.ToString(Amin);
+		System.out.println(dottyformatOpmin);
+		
+		
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0,4})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {4,0})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {3,0})));		
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {0,5})));		
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0,0})));
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {1,0})));
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0,1})));
+		
+	}
+	
+	@Test
+	public void test_veryeasymin() throws IOException {
+		System.out.println("========= TEST very EASYrev with minimization ==========");
+		Automaton A = PA2FA.dothejob("Test/veryeasy.in"); // x<=4
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {5})));
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {77})));		
+		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {7})));		
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {2})));
+		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
+		
+		System.out.println("minimized Automaton");
+		Automaton Amin = MakeAutomata.minimize(A);
+		String dottyformatOpmin = objMakeAutomaton.ToString(Amin);
+		System.out.println(dottyformatOpmin);
+		
+
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {1})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {5})));
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {77})));		
+		assertFalse(MakeAutomata.member(Amin, wordfromints(new int[] {7})));		
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {4})));
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {2})));
+		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0})));
+		
+	}
+	
 	@Test
 	public void test_easyrev() throws IOException {
 		System.out.println("========= TEST EASYrev ==========");

@@ -26,6 +26,39 @@ public class UnivAutomatonTest {
 		
 	}
 	
+	
+	@Test
+	public void test_minimize() {
+		System.out.println("======= Test minimize ======");
+		SortedSet<String> ss = new TreeSet<String>();
+		ss.add("x");
+		Automaton A = MakeAutomata.UniversalAutomation(ss);
+		MakeAutomata objMakeAutomaton = new MakeAutomata();
+		
+		System.out.println("======= universalAuto with var x ======");
+		String dottyformatOp = objMakeAutomaton.ToString(A);
+		System.out.println(dottyformatOp);
+
+		System.out.println("======= minimized ======");
+		ss.add("y");		
+		Automaton Amin = MakeAutomata.minimize(A);
+		String Aminout = objMakeAutomaton.ToString(Amin);
+		System.out.println(Aminout);
+		
+		{
+			boolean[] character = new boolean[] { true};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Amin, word));
+		}{
+			boolean[] character = new boolean[] { false};
+			ArrayList<boolean[]> word = new ArrayList<boolean[]>();
+			word.add(character);
+			assertTrue(MakeAutomata.member(Amin, word));
+		}
+	}
+	
+	
 	@Test
 	public void test_extendTo() {
 		System.out.println("======= Test extendTO ======");
