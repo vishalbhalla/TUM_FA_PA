@@ -29,11 +29,7 @@ class Pair<A,B> {
 
 public class MakeAutomata {
 
-	//Automaton automaton;
-	public MakeAutomata() {	
-		
-	}
-	
+
 	
 	/**
 	 * generates an Automaton that accepts all words
@@ -172,7 +168,7 @@ public class MakeAutomata {
 	 * @param A1, A2
 	 * @return varset
 	 */
-	public SortedSet<String> TotalVariableSet(SortedSet<String> A1Variables, SortedSet<String> A2Variables) {
+	public static SortedSet<String> TotalVariableSet(SortedSet<String> A1Variables, SortedSet<String> A2Variables) {
 		SortedSet<String> varset = new TreeSet<String>();
 		varset.addAll(A1Variables);
 		for(String var :A2Variables)
@@ -405,7 +401,7 @@ public class MakeAutomata {
 	 * @param A1, A2
 	 * @return
 	 */
-	public Automaton Union(Automaton A1, Automaton A2) {
+	public static Automaton Union(Automaton A1, Automaton A2) {
 		//TODO
 		//SortedSet<String> varset = merge(this.variables, A2.variables);
 		//A2 = A2.extendTo(varset);
@@ -421,9 +417,8 @@ public class MakeAutomata {
 	 * @param A1, A2
 	 * @return
 	 */
-	public Automaton AutomatonUnion(Automaton A1, Automaton A2) {
-		//TODO
-		//...
+	public static Automaton AutomatonUnion(Automaton A1, Automaton A2) {
+
 		Automaton A1UnionA2 = ProductAutomaton(A1, A2, true); // boolUnion is set to true for Union operation
 		
 		return A1UnionA2;
@@ -435,7 +430,7 @@ public class MakeAutomata {
 	 * @param A1, A2, boolUnion -> to determine the set of final States and is set to True for Union and False for Intersection.
 	 * @return
 	 */
-	public Automaton ProductAutomaton(Automaton oldA1, Automaton oldA2, boolean boolUnion) {
+	public static Automaton ProductAutomaton(Automaton oldA1, Automaton oldA2, boolean boolUnion) {
 		
 		Automaton A =  new Automaton();
 		A.variables = TotalVariableSet(oldA1.variables, oldA2.variables);
@@ -571,16 +566,15 @@ public class MakeAutomata {
 	 * @param A1, A2
 	 * @return
 	 */
-	public Automaton Intersect(Automaton A1, Automaton A2) {
+	public static Automaton Intersect(Automaton A1, Automaton A2) {
 	
 		Automaton A1IntersectA2 = AutomatonIntersection(A1, A2);
 		return A1IntersectA2;
 	}
 	
 	
-	public Automaton AutomatonIntersection(Automaton A1, Automaton A2) {
-		//TODO
-		//...
+	public static Automaton AutomatonIntersection(Automaton A1, Automaton A2) {
+
 		Automaton A1IntersectA2 = ProductAutomaton(A1, A2, false); // boolUnion is set to false for Intersection operation
 		
 		return A1IntersectA2;
@@ -591,7 +585,7 @@ public class MakeAutomata {
 	 * TODO: Take Care !! this method alters the automaton A1 !!
 	 * @param A1, variableName
 	 */
-	public Automaton Project(Automaton A1, String variableName) {
+	public static Automaton Project(Automaton A1, String variableName) {
 		
 		if(!A1.variables.contains(variableName)) {
 			System.out.println("ERROR: variable not in Set of free Variables!");
@@ -654,7 +648,7 @@ public class MakeAutomata {
 	/**
 	 * complements the Automaton (Assuming that the input automation is a DFA)
 	 */
-	public Automaton Complement(Automaton A) {
+	public static Automaton Complement(Automaton A) {
 		Automaton AComplement = new Automaton();
 		AComplement.startState = A.startState;
 		AComplement.variables = A.variables;
@@ -679,7 +673,7 @@ public class MakeAutomata {
 	 * exports the automaton in the dotty-format (visualize e.g. with GraphViz)
 	 * @return
 	 */
-	public String ToString( Automaton a) {
+	public static String ToString( Automaton a) {
 		String list_of_edges = "";
 		ArrayList<String> edgelist = new ArrayList<String>();
 		for(Map.Entry<String, HashMap<String,Transitions>> transition : a.trans.entrySet()) {
@@ -816,48 +810,6 @@ public class MakeAutomata {
 
 	
 	
-	
-	//NFA with 3 variables
-		public static Automaton CreateStubNFAWith3Variables(SortedSet<String> varSet)
-		{
-			Automaton A = new Automaton();
-			A.startState = "1";
-			A.variables = varSet;
-
-			Transitions t = generateAllCombinations(varSet.size());
-			
-			HashMap<String,Transitions> hm = new HashMap<String,Transitions>();
-			String state2 = "2";
-			hm.put(state2,t);
-			A.trans.put(A.startState, hm);
-			A.finalState.add(state2);
-			
-			HashMap<String,Transitions> hm2 = new HashMap<String,Transitions>();
-			String state3 = "3";
-			hm2.put(state3,t);
-			
-			String state4 = "4";
-			hm2.put(state4,t);
-			A.trans.put(state2, hm2);
-			A.finalState.add(state4);
-			
-			HashMap<String,Transitions> hm3 = new HashMap<String,Transitions>();
-			hm3.put(state4,t);
-			A.trans.put(state3, hm3);
-			
-			HashMap<String,Transitions> hm4 = new HashMap<String,Transitions>();
-			String state5 = "5";
-			hm4.put(state5,t);
-			A.trans.put(state4, hm4);
-			
-			HashMap<String,Transitions> hm5 = new HashMap<String,Transitions>();
-			hm5.put(state3,t);
-			hm5.put(A.startState,t);
-			A.trans.put(state5, hm5);
-			
-			return A;
-		}
-		
 		//NFA with 2 variables
 		public static Automaton CreateStubNFAWith2Variables(SortedSet<String> varSet)
 		{
@@ -993,7 +945,14 @@ public class MakeAutomata {
 		}
 		
 		
-
+		/**
+		 * This method determinizes the given Automaton
+		 * 
+		 * it does not alter the input
+		 * @param aNFA
+		 * @return
+		 * @author max
+		 */
 		public static Automaton determinize(Automaton aNFA) 
 		{
 			Automaton DFA = new Automaton();
@@ -1092,7 +1051,7 @@ public class MakeAutomata {
 		 * Converts the given NFA to a DFA.
 		 * @author vishal
 		 */
-		public Automaton ConvertNFAToDFA(Automaton aNFA) 
+		public static Automaton ConvertNFAToDFA(Automaton aNFA) 
 		{
 			Automaton aDFA = new Automaton();
 			aDFA.startState = aNFA.startState;
@@ -1350,7 +1309,7 @@ public class MakeAutomata {
 		/**
 		 * Remap the given DFA with new state names.
 		 */
-		public Automaton DFAWithRemappedStates(Automaton A) {
+		public static Automaton DFAWithRemappedStates(Automaton A) {
 			Automaton ADFAWithRemappedStates = new Automaton();
 			//ADFAWithRemappedStates.startState = A.startState;
 			ADFAWithRemappedStates.variables = A.variables;

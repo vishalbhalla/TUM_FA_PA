@@ -37,7 +37,6 @@ public class TranslationTest {
 	
 	@Test
 	public void test_AF2DFA() {
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 
 		ArrayList<String> objlsvar = new ArrayList<String>();
 		objlsvar.add("x");
@@ -48,7 +47,7 @@ public class TranslationTest {
 		System.out.println("The Ineqation: x <= 1");
 		
 		System.out.println("The resulting Automaton");
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(dottyformatOp!=null);

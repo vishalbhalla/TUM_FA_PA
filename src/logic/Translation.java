@@ -109,7 +109,6 @@ public class Translation {
 	
 	public static Automaton pa2fa(OTree objtree) {
 		
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		switch(objtree.type) {
 
 			case PALexer.EX :
@@ -117,12 +116,12 @@ public class Translation {
 				String varname = ex.var;
 				OTree son  = ex.son;
 				Automaton ASon = pa2fa(son);
-				Automaton AEx = objMakeAutomaton.Project(ASon, varname);
-				System.out.println((new MakeAutomata()).ToString(AEx));
+				Automaton AEx = MakeAutomata.Project(ASon, varname);
+				System.out.println(MakeAutomata.ToString(AEx));
 				Automaton ADet = MakeAutomata.determinize(AEx);
-				System.out.println((new MakeAutomata()).ToString(ADet));
+				System.out.println(MakeAutomata.ToString(ADet));
 				Automaton AMin = MakeAutomata.minimize(ADet);
-				System.out.println((new MakeAutomata()).ToString(AMin));
+				System.out.println(MakeAutomata.ToString(AMin));
 				return AMin;
 				
 			case PALexer.ALL :
@@ -130,11 +129,11 @@ public class Translation {
 				String varname1 = ex1.var;
 				OTree son1  = ex1.son;
 				Automaton ASon1 = pa2fa(son1);
-				Automaton ANegSon1 = objMakeAutomaton.Complement(ASon1);
-				Automaton AAll = objMakeAutomaton.Project(ANegSon1, varname1);
+				Automaton ANegSon1 = MakeAutomata.Complement(ASon1);
+				Automaton AAll = MakeAutomata.Project(ANegSon1, varname1);
 				Automaton DFAAll = MakeAutomata.determinize(AAll);
 				Automaton DFAmin = MakeAutomata.minimize(DFAAll);
-				Automaton ret = objMakeAutomaton.Complement(DFAmin);
+				Automaton ret = MakeAutomata.Complement(DFAmin);
 				return ret;
 				
 				// all the comparators starting a atomic formula
@@ -145,9 +144,9 @@ public class Translation {
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
 				Automaton left = AF2DFA(rightside, objlsvar, objlscoeff);
-				Automaton right = objMakeAutomaton.Complement(AF2DFA(rightside-1, objlsvar, objlscoeff));
+				Automaton right = MakeAutomata.Complement(AF2DFA(rightside-1, objlsvar, objlscoeff));
 				
-				return objMakeAutomaton.Intersect(left, right);
+				return MakeAutomata.Intersect(left, right);
 			}
             case PALexer.NEQ :{ // case Ab != x, transformed to !(Ab <= x) || Ab<=x-1
 				AF objAF = (AF)objtree;
@@ -155,10 +154,10 @@ public class Translation {
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
-				Automaton left = objMakeAutomaton.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
+				Automaton left = MakeAutomata.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
 				Automaton right = AF2DFA(rightside-1, objlsvar, objlscoeff);
 				
-				return objMakeAutomaton.Union(left, right);
+				return MakeAutomata.Union(left, right);
 			}
             case PALexer.GEQ :{ // case Ab >= x, transformed to !(Ab <= x-1)
 				AF objAF = (AF)objtree;
@@ -167,9 +166,9 @@ public class Translation {
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 			
 				Automaton A = AF2DFA(rightside-1, objlsvar, objlscoeff);
-				System.out.println((new MakeAutomata()).ToString(A));
-				Automaton Ac = objMakeAutomaton.Complement(A);
-				System.out.println((new MakeAutomata()).ToString(Ac));
+				System.out.println(MakeAutomata.ToString(A));
+				Automaton Ac = MakeAutomata.Complement(A);
+				System.out.println(MakeAutomata.ToString(Ac));
 				return Ac;
 			}
             case PALexer.LEQ : { // standard case <=
@@ -186,7 +185,7 @@ public class Translation {
 				ArrayList<String> objlsvar = objAF.lsvar;
 				ArrayList<Integer> objlscoeff = objAF.lscoeff;
 				
-				return objMakeAutomaton.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
+				return MakeAutomata.Complement(AF2DFA(rightside, objlsvar, objlscoeff));
             }
             case PALexer.LT : { // case  Ab < x transformed to Ab <= x-1  
 				AF objAF = (AF)objtree;
@@ -200,40 +199,40 @@ public class Translation {
 		    	BinTree objBinTreeAnd = (BinTree)objtree;
 				Automaton ALeftAnd = pa2fa(objBinTreeAnd.left);
 				Automaton ARightAnd = pa2fa(objBinTreeAnd.right);
-				Automaton A1IntersectA2 = objMakeAutomaton.Intersect(ALeftAnd,ARightAnd);
+				Automaton A1IntersectA2 = MakeAutomata.Intersect(ALeftAnd,ARightAnd);
 				return A1IntersectA2;
 			
 			case PALexer.OR:
 				BinTree objBinTreeOr = (BinTree)objtree;
 				Automaton ALeftOr = pa2fa(objBinTreeOr.left);
 				Automaton ARightOr = pa2fa(objBinTreeOr.right);
-				Automaton A1UnionA2 = objMakeAutomaton.Union(ALeftOr, ARightOr);
+				Automaton A1UnionA2 = MakeAutomata.Union(ALeftOr, ARightOr);
 				return A1UnionA2;
 					
 			case PALexer.NEG:		
 				UnTree u = (UnTree)objtree;				
-				Automaton NegA = objMakeAutomaton.Complement(pa2fa(u.son));
+				Automaton NegA = MakeAutomata.Complement(pa2fa(u.son));
 				return NegA;
 			
 			case PALexer.IMP:
 				BinTree objBinTreeImp = (BinTree)objtree;
 				Automaton ALeftImp = pa2fa(objBinTreeImp.left);
-				Automaton ALeftImpNeg = objMakeAutomaton.Complement(ALeftImp);
+				Automaton ALeftImpNeg = MakeAutomata.Complement(ALeftImp);
 				Automaton ARightImp = pa2fa(objBinTreeImp.right);
-				Automaton A1ImpA2 = objMakeAutomaton.Union(ALeftImpNeg, ARightImp);
+				Automaton A1ImpA2 = MakeAutomata.Union(ALeftImpNeg, ARightImp);
 				return A1ImpA2;
 				
 			case PALexer.EQV:		
 				BinTree objBinTreeEqvImp = (BinTree)objtree;
 				Automaton ALeftEqvImp = pa2fa(objBinTreeEqvImp.left);
-				Automaton ALeftEqvImpNeg = objMakeAutomaton.Complement(ALeftEqvImp);
+				Automaton ALeftEqvImpNeg = MakeAutomata.Complement(ALeftEqvImp);
 				Automaton ARightEqvImp = pa2fa(objBinTreeEqvImp.right);
-				Automaton ABimpTerm1 = objMakeAutomaton.Union(ALeftEqvImpNeg, ARightEqvImp);
+				Automaton ABimpTerm1 = MakeAutomata.Union(ALeftEqvImpNeg, ARightEqvImp);
 				
-				Automaton ARightEqvImpNeg = objMakeAutomaton.Complement(ARightEqvImp);
-				Automaton ABimpTerm2 = objMakeAutomaton.Union(ARightEqvImpNeg, ALeftEqvImp);
+				Automaton ARightEqvImpNeg = MakeAutomata.Complement(ARightEqvImp);
+				Automaton ABimpTerm2 = MakeAutomata.Union(ARightEqvImpNeg, ALeftEqvImp);
 				
-				Automaton A1BimpA2 = objMakeAutomaton.Intersect(ABimpTerm1, ABimpTerm2);
+				Automaton A1BimpA2 = MakeAutomata.Intersect(ABimpTerm1, ABimpTerm2);
 				return A1BimpA2;
 				
 			default:

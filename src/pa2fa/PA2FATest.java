@@ -39,9 +39,8 @@ public class PA2FATest {
 	public void test_easyrevmin() throws IOException {
 		System.out.println("========= TEST EASYrev with minimization ==========");
 		Automaton A = PA2FA.dothejob("Test/easyrev.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
@@ -54,7 +53,7 @@ public class PA2FATest {
 		
 		System.out.println("minimized Automaton");
 		Automaton Amin = MakeAutomata.minimize(A);
-		String dottyformatOpmin = objMakeAutomaton.ToString(Amin);
+		String dottyformatOpmin = MakeAutomata.ToString(Amin);
 		System.out.println(dottyformatOpmin);
 		
 		
@@ -72,9 +71,8 @@ public class PA2FATest {
 	public void test_veryeasymin() throws IOException {
 		System.out.println("========= TEST very EASYrev with minimization ==========");
 		Automaton A = PA2FA.dothejob("Test/veryeasy.in"); // x<=4
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {1})));
@@ -87,7 +85,7 @@ public class PA2FATest {
 		
 		System.out.println("minimized Automaton");
 		Automaton Amin = MakeAutomata.minimize(A);
-		String dottyformatOpmin = objMakeAutomaton.ToString(Amin);
+		String dottyformatOpmin = MakeAutomata.ToString(Amin);
 		System.out.println(dottyformatOpmin);
 		
 
@@ -105,9 +103,8 @@ public class PA2FATest {
 	public void test_easyrev() throws IOException {
 		System.out.println("========= TEST EASYrev ==========");
 		Automaton A = PA2FA.dothejob("Test/easyrev.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0,4})));
@@ -124,9 +121,8 @@ public class PA2FATest {
 	public void test_testEx() throws IOException {
 		System.out.println("========= TEST Ex ==========");
 		Automaton A = PA2FA.dothejob("Test/testEx.txt"); // Ey x + y <= 2 
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {0})));
@@ -141,9 +137,8 @@ public class PA2FATest {
 	public void test_teststrangeEx() throws IOException {
 		System.out.println("========= TEST strange Ex ==========");
 		Automaton A = PA2FA.dothejob("Test/test_teststrangeEx.txt"); // Ex x <= 2 
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {})));
@@ -154,9 +149,8 @@ public class PA2FATest {
 	public void test_easy() throws IOException {
 		System.out.println("========= TEST EASY ==========");
 		Automaton A = PA2FA.dothejob("Test/easy.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(A, wordfromints(new int[] {4,0})));
@@ -173,9 +167,8 @@ public class PA2FATest {
 	public void test_negation() throws IOException {
 		System.out.println("========= TEST negation ==========");
 		Automaton A = PA2FA.dothejob("Test/negtest.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 
 		assertFalse(MakeAutomata.member(A, wordfromints(new int[] {0})));
@@ -194,9 +187,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using AND ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/usingand1.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -213,9 +205,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using NEQ ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testNEQ.txt"); // x!=1
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -232,9 +223,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using EQ ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testEQ.txt");
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -250,9 +240,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using ALL ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testALL.txt"); // Ax x - y >= 0
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 
@@ -269,9 +258,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using OR ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testOR.txt"); // x<=3 || y<=10
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 
@@ -289,9 +277,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using GEQ ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testGEQ.txt"); // x>=3
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -308,9 +295,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using GT ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testGT.txt"); // x>10
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -328,9 +314,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using LT ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/testLT.txt"); // x<6
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -348,9 +333,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using Moritz Test2 ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/test2.txt"); // ((x<15 && y>=15) && x+y+z <=15)
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		for(int i=0; i<=16; i++) {
@@ -379,9 +363,9 @@ public class PA2FATest {
 		
 		// with renaming:
 		
-		Automaton Are = objMakeAutomaton.DFAWithRemappedStates(A);
+		Automaton Are = MakeAutomata.DFAWithRemappedStates(A);
 		
-		dottyformatOp = objMakeAutomaton.ToString(Are);
+		dottyformatOp = MakeAutomata.ToString(Are);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(Are, wordfromints(new int[] {0,15,0})));
@@ -395,7 +379,7 @@ public class PA2FATest {
 		
 		Automaton Amin = MakeAutomata.minimize(Are);
 		
-		dottyformatOp = objMakeAutomaton.ToString(Amin);
+		dottyformatOp = MakeAutomata.ToString(Amin);
 		System.out.println(dottyformatOp);
 		
 		assertTrue(MakeAutomata.member(Amin, wordfromints(new int[] {0,15,0})));
@@ -412,9 +396,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using Moritz Test3 ' ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/test3_2.txt"); // Ez x+y+z+u>=15
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -430,9 +413,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using Moritz Test3 ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/test3.txt"); // ExAyEz x+y+z+u>=15
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
@@ -449,9 +431,8 @@ public class PA2FATest {
 		System.out.println("========= TEST using Moritz Test6 ==========");
 		
 		Automaton A = PA2FA.dothejob("Test/test6.txt"); // (x>=2 && x<=2)
-		MakeAutomata objMakeAutomaton = new MakeAutomata();
 		
-		String dottyformatOp = objMakeAutomaton.ToString(A);
+		String dottyformatOp = MakeAutomata.ToString(A);
 		System.out.println(dottyformatOp);
 		
 		
