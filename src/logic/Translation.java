@@ -103,7 +103,7 @@ public class Translation {
 			}
 		}
 		
-		return A;
+		return MakeAutomata.minimize(A);
 	}
 	
 	
